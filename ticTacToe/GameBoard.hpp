@@ -25,9 +25,12 @@ namespace GameBoard {
                 case Left: return CellPosition(row, column-1);
             }
         }
-        
-        
     };
+    
+//    std::ostream& operator<<(std::ostream& os, const CellPosition& cellPosition) {
+//        os << cellPosition.row << "," << cellPosition.column;
+//        return os;
+//    }
     
     struct CellSwapMove {
         CellPosition from;
@@ -36,22 +39,15 @@ namespace GameBoard {
         CellSwapMove(CellPosition from, CellPosition to): from(from), to(to) {}
     };
     
-    std::ostream& operator<<(std::ostream& os, const CellSwapMove& move) {
-        os << move.from.row << "," << move.from.column << " -> " << move.to.row << "," << move.to.column;
-        return os;
-    }
-    
-    std::ostream& operator<<(std::ostream& os, const CellPosition& cellPosition) {
-        os << cellPosition.row << "," << cellPosition.column;
-        return os;
-    }
-    
+//    std::ostream& operator<<(std::ostream& os, const CellSwapMove& move) {
+//        os << move.from.row << "," << move.from.column << " -> " << move.to.row << "," << move.to.column;
+//        return os;
+//    }
     
     template<size_t ROWS, size_t COLUMNS, typename CellType>
     class GameBoard {
     private:
         CellType gameBoard[ROWS][COLUMNS];
-        
     public:
         
         size_t rows = ROWS;
@@ -108,6 +104,9 @@ namespace GameBoard {
         }
         
         bool operator==(const GameBoard & gameBoard) const {
+            if (rows != gameBoard.rows || columns != gameBoard.columns) {
+                return false;
+            }
             for (auto i = 0; i < rows; i++) {
                 for (auto j = 0; j < columns; j++) {
                     if ((*this)[i][j] != gameBoard[i][j]) {
@@ -118,9 +117,6 @@ namespace GameBoard {
             return true;
         }
     };
-    
-
-    
 }
 
 #endif /* GameBoard_hpp */

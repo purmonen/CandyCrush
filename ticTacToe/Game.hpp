@@ -11,50 +11,12 @@ public:
 //    virtual Game gameForMove(MoveType) = 0;
 };
 
-
-//template <typename MoveType>
-//class Game2 {
-//public:
-//    virtual std::vector<MoveType> legalMoves() = 0;
-//    virtual bool play(MoveType move) = 0;
-//    virtual bool gameOver() = 0;
-//};
-
 template <typename MoveType>
 class Player {
 public:
     virtual MoveType selectMove(const Game<MoveType>&) = 0;
     virtual std::string description() const = 0;
 };
-
-
-
-
-
-
-//template <typename MoveType>
-//class RandomBot2: public Player2<MoveType> {
-//public:
-//    MoveType selectMove(const Game<MoveType>& game) {
-//        auto legalMoves = game.legalMoves();
-//        return legalMoves[rand()%legalMoves.size()];
-//    }
-//    
-//    std::string description() {
-//        return "Random bot - selects the next move randomly";
-//    }
-//};
-//
-
-
-
-//template <typename GameType>
-//class Player {
-//public:
-//    virtual void play(GameType&) = 0;
-//    virtual std::string description() = 0;
-//};
-
 
 template <typename MoveType>
 class RandomBot: public Player<MoveType> {
@@ -79,7 +41,7 @@ public:
         std::cout << legalMoves.size() << " legal moves" << std::endl;
         for (auto i = 0; i < legalMoves.size(); i++) {
             auto legalMove = legalMoves[i];
-            std::cout << i << ". " << legalMove << std::endl;
+//            std::cout << i << ". " << legalMove << std::endl;
         }
         
         std::cout << "Select move: ";

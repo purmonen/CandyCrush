@@ -4,7 +4,9 @@
 #include <unordered_set>
 #include <vector>
 #include "CandyCrush.hpp"
+#include "CandyCrushPlayer.hpp"
 #include "TicTacToe.hpp"
+#include "TicTacToePlayer.hpp"
 #include <chrono>
 
 void testGameHashing() {
@@ -62,7 +64,7 @@ int main(int argc, const char * argv[]) {
         
         if (selectedGameIndex == 1) {
             
-            // Player<Game<GameBoardMove>>
+//             Player<Game<GameBoardMove>>
             
             auto randomBot = CandyCrushRandomBot();
             auto humanPlayer = CandyCrushHumanPlayer();
@@ -134,30 +136,6 @@ int main(int argc, const char * argv[]) {
     
     
     return 0;
-}
-
-
-
-
-class A {};
-class B: public A {};
-
-
-template<typename T>
-class C {};
-
-template<typename T>
-class D: public C<T> {};
-
-void a() {
-    std::vector<A*> x;
-    x.push_back(new B());
-    x.push_back(new A());
-    
-    
-    auto d1 = D<int>();
-    auto c1 = C<int>();
-    std::vector<C<int>*> y = {&d1, &c1};
 }
 
 
