@@ -1,0 +1,14 @@
+What is it?
+-------------------------------------------------
+This program can run two games with humans and AI.
+
+1. Tic Tac Toe
+AI: Random, Minimax, Monte Carlo.
+
+
+2. Candy Crush
+AI: Random, Monte Carlo, Greedy
+
+How to run it?
+-------------------------------------------------
+g++ -std=c++14 main.cpp; ./a.out
