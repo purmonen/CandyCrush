@@ -35,12 +35,12 @@ GameBoard::CellSwapMove CandyCrushGreedyBot::selectMove(const CandyCrush& game) 
 }
 
 std::string CandyCrushGreedyBot::description() const {
-    return "Greedy bot - selects the next move that maximises immediate score";
+    return "Greedy";
 }
 
 
 CandyCrushMonteCarloBot::~CandyCrushMonteCarloBot() {
-    std::cout << "Number of states in monte carlo: " << numberOfGames.size() << std::endl;
+//    std::cout << "Number of states in monte carlo: " << numberOfGames.size() << std::endl;
     //        for (auto games: numberOfGames) {
     //            std::cout << games.second << " - " << totalScore[games.first] << std::endl;
     //        }

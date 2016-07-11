@@ -12,6 +12,7 @@
 		26D1363E1D33042900B71B0C /* CandyCrush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D1363D1D33042900B71B0C /* CandyCrush.cpp */; };
 		26D136401D33133000B71B0C /* TicTacToe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D1363F1D33133000B71B0C /* TicTacToe.cpp */; };
 		26D136431D33144400B71B0C /* TicTacToePlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D136411D33144400B71B0C /* TicTacToePlayer.cpp */; };
+		26D136471D3318F700B71B0C /* GameBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D136461D3318F700B71B0C /* GameBoard.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -36,6 +37,7 @@
 		26D1363F1D33133000B71B0C /* TicTacToe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TicTacToe.cpp; sourceTree = "<group>"; };
 		26D136411D33144400B71B0C /* TicTacToePlayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TicTacToePlayer.cpp; sourceTree = "<group>"; };
 		26D136421D33144400B71B0C /* TicTacToePlayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TicTacToePlayer.hpp; sourceTree = "<group>"; };
+		26D136461D3318F700B71B0C /* GameBoard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameBoard.cpp; sourceTree = "<group>"; };
 		26F284CB1D313DDE00D9B177 /* CandyCrush.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = CandyCrush.hpp; sourceTree = "<group>"; };
 		26F284CE1D313EE800D9B177 /* TicTacToe.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = TicTacToe.hpp; sourceTree = "<group>"; };
 		26F284D11D31529800D9B177 /* GameBoard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameBoard.hpp; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 				26D1363A1D33038B00B71B0C /* CandyCrushPlayer.cpp */,
 				26D1363B1D33038B00B71B0C /* CandyCrushPlayer.hpp */,
 				26F284D11D31529800D9B177 /* GameBoard.hpp */,
+				26D136461D3318F700B71B0C /* GameBoard.cpp */,
 				26F284D41D31A09200D9B177 /* Game.hpp */,
 				26F284CE1D313EE800D9B177 /* TicTacToe.hpp */,
 				26D1363F1D33133000B71B0C /* TicTacToe.cpp */,
@@ -148,6 +151,7 @@
 				26D1363C1D33038B00B71B0C /* CandyCrushPlayer.cpp in Sources */,
 				26D1363E1D33042900B71B0C /* CandyCrush.cpp in Sources */,
 				26D136401D33133000B71B0C /* TicTacToe.cpp in Sources */,
+				26D136471D3318F700B71B0C /* GameBoard.cpp in Sources */,
 				26721FF61D2938400032572C /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

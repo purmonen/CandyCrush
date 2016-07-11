@@ -27,7 +27,7 @@ public:
     }
     
     std::string description() const {
-        return "Random bot - selects the next move randomly";
+        return "Random";
     }
 };
 
@@ -41,7 +41,7 @@ public:
         std::cout << legalMoves.size() << " legal moves" << std::endl;
         for (auto i = 0; i < legalMoves.size(); i++) {
             auto legalMove = legalMoves[i];
-//            std::cout << i << ". " << legalMove << std::endl;
+            std::cout << i << ". " << legalMove << std::endl;
         }
         
         std::cout << "Select move: ";
@@ -56,7 +56,7 @@ public:
     }
     
     std::string description() const {
-        return "You – enter commands through the terminal";
+        return "You";
     }
 };
 

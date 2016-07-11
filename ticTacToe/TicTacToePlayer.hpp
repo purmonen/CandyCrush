@@ -13,6 +13,7 @@ public:
 
 class TicTacToeHumanPlayer: public TicTacToePlayer {
 public:
+    
     GameBoard::CellPosition selectMove(const TicTacToe& game);
     std::string description() const;
 };

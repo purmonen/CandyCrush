@@ -60,7 +60,7 @@ GameBoard::CellPosition MiniMaxBot::selectMove(const TicTacToe& game) {
 }
 
 std::string MiniMaxBot::description() const {
-    return "Minimax bot";
+    return "Minimax";
 }
 
 

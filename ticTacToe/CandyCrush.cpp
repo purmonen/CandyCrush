@@ -145,16 +145,18 @@ std::vector<GameBoard::CellSwapMove> CandyCrush::legalMoves() const {
         }
         game.play(player.selectMove(game));
     }
-    std::cout << game;
+     if (showOutput) {
+         std::cout << game;
+     }
     return game.score;
 }
 
  int CandyCrush::run(CandyCrushPlayer& player, int numberOfGames) {
     auto totalScore = 0;
     for (int i = 0; i < numberOfGames; i++) {
-        totalScore += run(player);
+        totalScore += run(player, false);
     }
-    std::cout << "Average score: " << totalScore / numberOfGames << std::endl;
+//    std::cout << "Average score: " << totalScore / numberOfGames << std::endl;
     return totalScore / numberOfGames;
 }
 

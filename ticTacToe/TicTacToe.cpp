@@ -83,12 +83,16 @@ bool TicTacToe::gameOver() const {
         return gameResult() != Running;
     }
     
-TicTacToe::GameResult TicTacToe::run(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer) {
+TicTacToe::GameResult TicTacToe::run(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer, bool showOutput) {
         auto game = TicTacToe();
         while (!game.gameOver()) {
-            std::cout << game;
+            if (showOutput) {
+                std::cout << game;
+            }
             game.play((game.isWhitePlayersTurn() ? whitePlayer : blackPlayer).selectMove(game));
         }
+    
+    if (showOutput) {
         std::cout << game;
         switch (game.gameResult()) {
             case Win:
@@ -104,19 +108,32 @@ TicTacToe::GameResult TicTacToe::run(TicTacToePlayer& whitePlayer, TicTacToePlay
                 // Can't happen when game is over
                 throw;
         }
+    }
         return game.gameResult();
     }
-    
-    
-    struct TestResult {
-        int wins = 0;
-        int losses = 0;
-        int draws = 0;
-        
-        int numberOfGames() {
-            return wins + losses + draws;
+
+
+TicTacToe::TestResult TicTacToe::runMany(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer, int numberOfGames) {
+    TicTacToe::TestResult result;
+    for (auto i = 0; i < numberOfGames; i++) {
+        auto gameResult = TicTacToe::run(whitePlayer, blackPlayer, false);
+        switch (gameResult) {
+            case TicTacToe::Win:
+                result.wins++;
+                break;
+            case TicTacToe::Loss:
+                result.losses++;
+                break;
+            case TicTacToe::Draw:
+                result.draws++;
+                break;
+            case TicTacToe::Running:
+                // Can't happen when game is over
+                throw;
         }
-    };
+    }
+    return result;
+}
 
 std::ostream& operator<<(std::ostream& os, const TicTacToe& game) {
     std::unordered_map<TicTacToe::Cell, std::string> cellString {

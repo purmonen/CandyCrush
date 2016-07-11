@@ -27,10 +27,7 @@ namespace GameBoard {
         }
     };
     
-//    std::ostream& operator<<(std::ostream& os, const CellPosition& cellPosition) {
-//        os << cellPosition.row << "," << cellPosition.column;
-//        return os;
-//    }
+    std::ostream& operator<<(std::ostream& os, const CellPosition& cellPosition);
     
     struct CellSwapMove {
         CellPosition from;
@@ -39,10 +36,7 @@ namespace GameBoard {
         CellSwapMove(CellPosition from, CellPosition to): from(from), to(to) {}
     };
     
-//    std::ostream& operator<<(std::ostream& os, const CellSwapMove& move) {
-//        os << move.from.row << "," << move.from.column << " -> " << move.to.row << "," << move.to.column;
-//        return os;
-//    }
+    std::ostream& operator<<(std::ostream& os, const CellSwapMove& move);
     
     template<size_t ROWS, size_t COLUMNS, typename CellType>
     class GameBoard {

@@ -42,8 +42,6 @@ public:
     
     bool gameOver() const;
     
-    static GameResult run(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer);
-    
     struct TestResult {
         int wins = 0;
         int losses = 0;
@@ -53,6 +51,11 @@ public:
             return wins + losses + draws;
         }
     };
+    
+    static GameResult run(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer, bool showOutput = true);
+    static TestResult runMany(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer, int numberOfGames);
+    
+    
 
 };
 
