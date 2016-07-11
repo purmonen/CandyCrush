@@ -9,6 +9,34 @@
 #include "TicTacToePlayer.hpp"
 #include <chrono>
 
+template <typename ValueType>
+ValueType selectValueFromArrayUsingStdin(std::string prompt,  std::vector<std::pair<std::string, ValueType>> values) {
+    int selectedValueIndex = -1;
+    while (true) {
+        std::cout << prompt << std::endl;
+        for (auto index = 0; index < values.size(); index++) {
+            std::cout << "\t" << index+1 << ". " << values[index].first << std::endl;
+        }
+        if (std::cin.fail()) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+        std::cin >> selectedValueIndex;
+        selectedValueIndex--;
+        if (selectedValueIndex >= 0 && selectedValueIndex < values.size()) {
+            return values[selectedValueIndex].second;
+        } else {
+            std::cout << "Illegal input" << std::endl;
+        }
+    }
+    
+}
+
+void selectAndRunFunctionUsingStdin(std::string prompt, std::vector<std::pair<std::string, void (*)()>> functions) {
+    selectValueFromArrayUsingStdin(prompt, functions)();
+}
+
+
 void testGameHashing() {
     std::unordered_map<CandyCrush, int> counts;
     
@@ -31,134 +59,69 @@ void testGameHashing() {
     std::cout << "Hashed games: " << counts.size() << std::endl;
 }
 
-void runCandyCrush() {
-    int selectedPlayStyleIndex = -1;
-    int playYourselfIndex = 1;
-    int letBotsPlayIndex = 2;
-    
-    while (selectedPlayStyleIndex != playYourselfIndex && selectedPlayStyleIndex != letBotsPlayIndex) {
-        std::cout << "How do you wanna play?" << std::endl;
-        std::cout << "\t" << playYourselfIndex << ". Play yourself" << std::endl;
-        std::cout << "\t" << letBotsPlayIndex << ". Let the bots play" << std::endl;
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
-        std::cin >> selectedPlayStyleIndex;
+void runCandyCrushYourself() {
+    auto humanPlayer = CandyCrushHumanPlayer();
+    CandyCrush::run(humanPlayer, true);
+}
+
+void runCandyCrushWithBots() {
+    auto randomBot = CandyCrushRandomBot();
+    auto greedyBot = CandyCrushGreedyBot();
+    auto monteCarloBot = CandyCrushMonteCarloBot();
+    std::vector<CandyCrushPlayer*> players = {&randomBot, &greedyBot, &monteCarloBot};
+    for (auto player: players) {
+        std::cout << "\t" << (player->description()) << ": " << CandyCrush::run(*player, 10) << " points" << std::endl;
     }
+}
+
+void runCandyCrush() {
+    selectAndRunFunctionUsingStdin("How do you wanna play?", {
+        {"Play yourself",runCandyCrushYourself},
+        {"Let the bots play", runCandyCrushWithBots}
+    });
+}
+
+
+void runTicTacToeAndOverview() {
+    auto humanPlayer = TicTacToeHumanPlayer();
+    auto randomBot = TicTacToeRandomBot();
+    auto minimaxBot = MiniMaxBot();
+    auto monteCarlo = MonteCarloBot();
+    std::vector<std::pair<std::string, TicTacToePlayer*>>  players = {{"You", &humanPlayer}, {"Random", &randomBot}, {"Minimax", &minimaxBot}, {"Monte Carlo", &monteCarlo}};
     
-    if (selectedPlayStyleIndex == playYourselfIndex) {
-        auto humanPlayer = CandyCrushHumanPlayer();
-        CandyCrush::run(humanPlayer, true);
-    } else if (selectedPlayStyleIndex == letBotsPlayIndex) {
-        auto randomBot = CandyCrushRandomBot();
-        auto greedyBot = CandyCrushGreedyBot();
-        auto monteCarloBot = CandyCrushMonteCarloBot();
-        std::vector<CandyCrushPlayer*> players = {&randomBot, &greedyBot, &monteCarloBot};
-        for (auto player: players) {
-            std::cout << "\t" << (player->description()) << ": " << CandyCrush::run(*player, 10) << " points" << std::endl;
+    auto whitePlayer = selectValueFromArrayUsingStdin("Select white player", players);
+    auto blackPlayer = selectValueFromArrayUsingStdin("Select black player", players);
+        TicTacToe::run(*whitePlayer, *blackPlayer);
+}
+
+void runTicTacToeWithBots() {
+    auto randomBot = TicTacToeRandomBot();
+    auto minimaxBot = MiniMaxBot();
+    auto monteCarlo = MonteCarloBot();
+    std::vector<TicTacToePlayer*>  bots = {&randomBot, &minimaxBot, &monteCarlo};
+    for (auto i = 0; i < bots.size(); i++) {
+        for (auto j = 0; j < bots.size(); j++) {
+            auto whitePlayer = bots[i];
+            auto blackPlayer = bots[j];
+            TicTacToe::TestResult testResult = TicTacToe::runMany(*whitePlayer, *blackPlayer, 10);
+            std::cout << "\t" << (whitePlayer->description()) << " VS " << (blackPlayer->description()) << ": ";
+            std::cout << testResult.wins/(double)testResult.numberOfGames()*100 << " wins, " << testResult.draws/(double)testResult.numberOfGames()*100 << " draws, " << testResult.losses/(double)testResult.numberOfGames()*100 << " losses" << std::endl;
         }
     }
 }
 
 void runTicTacToe() {
-    int selectedPlayStyleIndex = -1;
-    int playYourselfIndex = 1;
-    int letBotsPlayIndex = 2;
-    
-    while (selectedPlayStyleIndex != playYourselfIndex && selectedPlayStyleIndex != letBotsPlayIndex) {
-        std::cout << "How do you wanna play?" << std::endl;
-        std::cout << "\t" << playYourselfIndex << ". Overview a game between two opponents (maybe yourself)" << std::endl;
-        std::cout << "\t" << letBotsPlayIndex << ". Let all bots play against each other" << std::endl;
-        if (std::cin.fail()) {
-            std::cin.clear();
-            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-        }
-        std::cin >> selectedPlayStyleIndex;
-    }
-    
-    
-    auto humanPlayer = TicTacToeHumanPlayer();
-    auto randomBot = TicTacToeRandomBot();
-    auto minimaxBot = MiniMaxBot();
-    auto monteCarlo = MonteCarloBot();
-    
-    std::vector<TicTacToePlayer*>  players = {&humanPlayer, &randomBot, &minimaxBot, &monteCarlo};
-    std::vector<TicTacToePlayer*>  bots = {&randomBot, &minimaxBot, &monteCarlo};
-    
-    if (selectedPlayStyleIndex == playYourselfIndex) {
-        int firstPlayerIndex = -1;
-        while (firstPlayerIndex < 0 || firstPlayerIndex > players.size()) {
-            std::cout << "Select first player:" << std::endl;
-            for (auto index = 0; index < players.size(); index++) {
-                std::cout << "\t" << index+1 << ". " << players[index]->description() << std::endl;
-            }
-            if (std::cin.fail()) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-            std::cin >> firstPlayerIndex;
-            firstPlayerIndex--;
-        }
-        
-        int secondPlayerIndex = -1;
-        while (secondPlayerIndex < 0 || secondPlayerIndex > players.size()) {
-            
-            std::cout << "Select second player:" << std::endl;
-            for (auto index = 0; index < players.size(); index++) {
-                std::cout << "\t" << index+1 << ". " << players[index]->description() << std::endl;
-            }
-            if (std::cin.fail()) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-            std::cin >> secondPlayerIndex;
-            secondPlayerIndex--;
-        }
-        
-        if (firstPlayerIndex >= 0 && firstPlayerIndex < players.size() && secondPlayerIndex >= 0 && secondPlayerIndex < players.size()) {
-            TicTacToe::run(*players[firstPlayerIndex], *players[secondPlayerIndex]);
-        }
-    } else if (selectedPlayStyleIndex == letBotsPlayIndex) {
-        for (auto i = 0; i < bots.size(); i++) {
-            for (auto j = 0; j < bots.size(); j++) {
-                auto whitePlayer = bots[i];
-                auto blackPlayer = bots[j];
-                TicTacToe::TestResult testResult = TicTacToe::runMany(*whitePlayer, *blackPlayer, 10);
-                std::cout << "\t" << (whitePlayer->description()) << " VS " << (blackPlayer->description()) << ": ";
-                std::cout << testResult.wins/(double)testResult.numberOfGames()*100 << " wins, " << testResult.draws/(double)testResult.numberOfGames()*100 << " draws, " << testResult.losses/(double)testResult.numberOfGames()*100 << " losses" << std::endl;
-            }
-        }
-    }
+    selectAndRunFunctionUsingStdin("How do you wanna play?", {
+        {"Overview a game between two opponents (maybe yourself)",runTicTacToeAndOverview},
+        {"Let all bots play against each other", runTicTacToeWithBots}
+    });
 }
 
 int main(int argc, const char * argv[]) {
-    const int candyCrushIndex = 1;
-    const int ticTacToeIndex = 2;
-    
-    while (true) {
-        int selectedGameIndex = -1;
-        while (selectedGameIndex != candyCrushIndex && selectedGameIndex != ticTacToeIndex) {
-            std::cout << "Select game: " << std::endl;
-            std::cout << "\t" << candyCrushIndex << ". Candy Crush" << std::endl;
-            std::cout << "\t" << ticTacToeIndex << ". Tic Tac Toe" << std::endl;
-            if (std::cin.fail()) {
-                std::cin.clear();
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-            }
-            std::cin >> selectedGameIndex;
-        }
-        
-        if (selectedGameIndex == candyCrushIndex) {
-            runCandyCrush();
-        } else if (selectedGameIndex == ticTacToeIndex) {
-            runTicTacToe();
-        }
-        std::cout << std::endl;
-    }
-    
-    
-    
+    selectAndRunFunctionUsingStdin("Select game", {
+        {"Candy Crush",runCandyCrush},
+        {"Tic Tac Toe", runTicTacToe}
+    });
     return 0;
 }
 
