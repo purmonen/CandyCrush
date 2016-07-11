@@ -11,5 +11,5 @@ AI: Random, Monte Carlo, Greedy. Monte Carlo is best followed by the greedy stra
 
 How to run it?
 -------------------------------------------------
-I've only tested on Mac OS X:
+I've only tested on Mac OS X, C++14 compiler is required
 g++ -std=c++14 *.cpp; ./a.out
