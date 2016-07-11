@@ -70,7 +70,7 @@ GameBoard::CellSwapMove CandyCrushMonteCarloBot::selectMove(const CandyCrush& ga
     std::vector<std::pair<GameBoard::CellSwapMove, CandyCrush>> nextStates;
     for (auto move: game.legalMoves()) {
         auto nextState = game.gameForMove(move);
-        nextStates.push_back(std::pair<GameBoard::CellSwapMove, CandyCrush>(move, nextState));
+        nextStates.push_back({move, nextState});
     }
     
     for (auto i = 0; i < 3; i++) {

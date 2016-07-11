@@ -55,15 +55,15 @@ namespace std {
     template <>
     struct hash<CandyCrush>
     {
-        std::size_t operator()(const CandyCrush& k) const
+        std::size_t operator()(const CandyCrush& game) const
         {
             using std::size_t;
             using std::hash;
             using std::string;
             
             
-            auto& gameBoard = k.getGameBoard();
-            std::size_t seed = k.getNumberOfMovesLeft();
+            auto& gameBoard = game.getGameBoard();
+            std::size_t seed = game.getNumberOfMovesLeft();
             
             for (auto row = 0; row < gameBoard.rows; row++) {
                 for (auto column = 0; column < gameBoard.columns; column++) {

@@ -30,7 +30,6 @@ std::pair<GameBoard::CellPosition, int> miniMaxWithAlphaBetaPruning(const TicTac
     } else if (game.gameResult() == TicTacToe::Draw) {
         return {dummyMove, 0};
     } else {
-        bool foundBetterMove = false;
         if (game.isWhitePlayersTurn()) {
             auto bestScore = std::numeric_limits<int>::min();
             auto legalMoves = game.legalMoves();
@@ -62,7 +61,6 @@ std::pair<GameBoard::CellPosition, int> miniMaxWithAlphaBetaPruning(const TicTac
                     break;
                 }
             }
-            assert(foundBetterMove);
             return {bestMove, bestScore};
         }
 
@@ -79,14 +77,36 @@ std::string MiniMaxBot::description() const {
 }
 
 
-void MonteCarloBot::simulate(const TicTacToe game) const {
+void MonteCarloBot::simulate(const TicTacToe& game) const {
     std::unordered_set<TicTacToe> visitedStates;
     visitedStates.insert(game);
     
     TicTacToe nextState = game;
     while (nextState.gameResult() == TicTacToe::Running) {
+        
         auto legalMoves = nextState.legalMoves();
-        nextState = nextState.gameForMove(legalMoves[rand() % legalMoves.size()]);
+        
+        auto bestNextState = nextState.gameForMove(legalMoves[0]);
+        auto bestNextStateValue = std::numeric_limits<int>::min();
+        for (auto move: legalMoves) {
+            auto possibleNextState = nextState.gameForMove(move);
+            
+            // Expand nodes if there are unexplored ones
+            if (numberOfGames.find(possibleNextState) == numberOfGames.end()) {
+                bestNextState = possibleNextState;
+                break;
+            }
+         
+            // Otherwise select the one with best upper confidence bound
+            auto c = 1;
+            auto value = numberOfWins[possibleNextState] / ((double)numberOfGames[possibleNextState]) + c * sqrt((log((double)numberOfGames[nextState]) / ((double)numberOfGames[possibleNextState])));
+            if (value > bestNextStateValue) {
+                bestNextStateValue = value;
+                bestNextState = possibleNextState;
+            }
+        }
+        
+        nextState = bestNextState;
         visitedStates.insert(nextState);
     }
     
@@ -99,14 +119,17 @@ void MonteCarloBot::simulate(const TicTacToe game) const {
 }
 
 GameBoard::CellPosition MonteCarloBot::selectMove(const TicTacToe& game) {
-    for (auto i = 0; i < 100; i++) { simulate(game); }
+    numberOfGames.clear();
+    numberOfWins.clear();
     
-    auto bestWinPercentage = -1;
+    for (auto i = 0; i < 200; i++) { simulate(game); }
+    auto bestWinPercentage = std::numeric_limits<int>::min();
     auto bestMove = game.legalMoves()[0];
     for (auto move: game.legalMoves()) {
         auto nextState = game.gameForMove(move);
         if (numberOfGames[nextState] > 0) {
-            auto winPercentage = numberOfWins[nextState] / (double)numberOfGames[nextState];
+            auto winPercentage = (double)numberOfWins[nextState] / (double)numberOfGames[nextState];
+//            std::cout << numberOfGames[nextState] << " -> " << numberOfWins[nextState] << std::endl;
             if (winPercentage > bestWinPercentage) {
                 bestWinPercentage = winPercentage;
                 bestMove = move;
@@ -114,6 +137,7 @@ GameBoard::CellPosition MonteCarloBot::selectMove(const TicTacToe& game) {
             
         }
     }
+    
     return bestMove;
 }
 
