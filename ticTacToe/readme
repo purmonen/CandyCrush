@@ -8,6 +8,7 @@ AI: Random, Minimax, Monte Carlo. Minimax is superior so far. Monte Carlo outper
 
 2. Candy Crush
 AI: Random, Monte Carlo, Greedy. Monte Carlo is best followed by the greedy strategy which chooses the move that maximises score in the next state.
+It's simplified version of Candy Crush, three or more cells of the same type must be in a horizontal or vertical line in order to get points, no fancy special candy (yet).
 
 How to run it?
 -------------------------------------------------
