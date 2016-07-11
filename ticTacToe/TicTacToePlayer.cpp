@@ -1,4 +1,5 @@
 #include "TicTacToePlayer.hpp"
+#include <assert.h>
 
 
 GameBoard::CellPosition TicTacToeRandomBot::selectMove(const TicTacToe& game) {
@@ -17,46 +18,60 @@ std::string TicTacToeHumanPlayer::description() const {
     return HumanPlayer<GameBoard::CellSwapMove>().description();
 }
 
-int MiniMaxBot::scoreForGame(const TicTacToe& game) {
-    if (game.gameResult() == TicTacToe::Loss) {
-        return 1;
-    } else if (game.gameResult() == TicTacToe::Win) {
-        return -1;
+
+std::pair<GameBoard::CellPosition, int> miniMaxWithAlphaBetaPruning(const TicTacToe& game, int alpha, int beta) {
+    
+    // The dummy move is not going to be performed since the game will be over already
+    const auto dummyMove = GameBoard::CellPosition(0,0);
+    if (game.gameResult() == TicTacToe::Win) {
+        return {dummyMove, 1};
+    } else if (game.gameResult() == TicTacToe::Loss) {
+        return {dummyMove, -1};
     } else if (game.gameResult() == TicTacToe::Draw) {
-        return 0;
+        return {dummyMove, 0};
     } else {
-        auto bestScore = game.isWhitePlayersTurn() ? 99999999 : -999999;
-        for (auto move: game.legalMoves()) {
-            auto score = scoreForGame(game.gameForMove(move));
-            if (game.isWhitePlayersTurn() && score <= bestScore) {
-                bestScore = score;
+        bool foundBetterMove = false;
+        if (game.isWhitePlayersTurn()) {
+            auto bestScore = std::numeric_limits<int>::min();
+            auto legalMoves = game.legalMoves();
+            auto bestMove = legalMoves[0];
+            for (auto move: legalMoves) {
+                auto score = miniMaxWithAlphaBetaPruning(game.gameForMove(move), alpha, beta).second;
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
+                alpha = std::max(alpha, bestScore);
+                if (alpha >= beta) {
+                    break;
+                }
             }
-            if (!game.isWhitePlayersTurn() && score >= bestScore) {
-                bestScore = score;
+            return {bestMove, bestScore};
+        } else {
+            auto bestScore = std::numeric_limits<int>::max();
+            auto legalMoves = game.legalMoves();
+            auto bestMove = legalMoves[0];
+            for (auto move: legalMoves) {
+                auto score = miniMaxWithAlphaBetaPruning(game.gameForMove(move), alpha, beta).second;
+                if (score < bestScore) {
+                    bestScore = score;
+                    bestMove = move;
+                }
+                beta = std::min(beta, bestScore);
+                if (alpha >= beta) {
+                    break;
+                }
             }
-            
-            
+            assert(foundBetterMove);
+            return {bestMove, bestScore};
         }
-        return bestScore;
+
     }
 }
 
+
 GameBoard::CellPosition MiniMaxBot::selectMove(const TicTacToe& game) {
-    auto legalMoves = game.legalMoves();
-    GameBoard::CellPosition bestMove = legalMoves[0];
-    auto bestMoveScore = game.isWhitePlayersTurn() ? 999999 : -999999;
-    for (auto move: legalMoves) {
-        auto score = scoreForGame(game.gameForMove(move));
-        if (game.isWhitePlayersTurn() && score <= bestMoveScore) {
-            bestMoveScore = score;
-            bestMove = move;
-        }
-        if (!game.isWhitePlayersTurn() && score >= bestMoveScore) {
-            bestMoveScore = score;
-            bestMove = move;
-        }
-    }
-    return bestMove;
+    return miniMaxWithAlphaBetaPruning(game, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()).first;
 }
 
 std::string MiniMaxBot::description() const {
@@ -81,7 +96,6 @@ void MonteCarloBot::simulate(const TicTacToe game) const {
             numberOfWins[state]++;
         }
     }
-    
 }
 
 GameBoard::CellPosition MonteCarloBot::selectMove(const TicTacToe& game) {

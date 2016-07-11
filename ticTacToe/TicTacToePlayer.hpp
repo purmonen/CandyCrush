@@ -20,7 +20,8 @@ public:
 
 class MiniMaxBot: public TicTacToePlayer {
 public:
-    int scoreForGame(const TicTacToe& game);
+//    int scoreForGame(const TicTacToe& game);
+////    std::pair<GameBoard::CellPosition, int> bestMoveForGame(const TicTacToe& game);
     GameBoard::CellPosition selectMove(const TicTacToe& game);
     std::string description() const;
 };

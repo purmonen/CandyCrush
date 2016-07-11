@@ -29,13 +29,11 @@ ValueType selectValueFromArrayUsingStdin(std::string prompt,  std::vector<std::p
             std::cout << "Illegal input" << std::endl;
         }
     }
-    
 }
 
 void selectAndRunFunctionUsingStdin(std::string prompt, std::vector<std::pair<std::string, void (*)()>> functions) {
     selectValueFromArrayUsingStdin(prompt, functions)();
 }
-
 
 void testGameHashing() {
     std::unordered_map<CandyCrush, int> counts;
@@ -81,7 +79,6 @@ void runCandyCrush() {
     });
 }
 
-
 void runTicTacToeAndOverview() {
     auto humanPlayer = TicTacToeHumanPlayer();
     auto randomBot = TicTacToeRandomBot();
@@ -91,7 +88,7 @@ void runTicTacToeAndOverview() {
     
     auto whitePlayer = selectValueFromArrayUsingStdin("Select white player", players);
     auto blackPlayer = selectValueFromArrayUsingStdin("Select black player", players);
-        TicTacToe::run(*whitePlayer, *blackPlayer);
+    TicTacToe::run(*whitePlayer, *blackPlayer);
 }
 
 void runTicTacToeWithBots() {
@@ -103,7 +100,7 @@ void runTicTacToeWithBots() {
         for (auto j = 0; j < bots.size(); j++) {
             auto whitePlayer = bots[i];
             auto blackPlayer = bots[j];
-            TicTacToe::TestResult testResult = TicTacToe::runMany(*whitePlayer, *blackPlayer, 10);
+            TicTacToe::TestResult testResult = TicTacToe::runMany(*whitePlayer, *blackPlayer, 50);
             std::cout << "\t" << (whitePlayer->description()) << " VS " << (blackPlayer->description()) << ": ";
             std::cout << testResult.wins/(double)testResult.numberOfGames()*100 << " wins, " << testResult.draws/(double)testResult.numberOfGames()*100 << " draws, " << testResult.losses/(double)testResult.numberOfGames()*100 << " losses" << std::endl;
         }
@@ -118,10 +115,12 @@ void runTicTacToe() {
 }
 
 int main(int argc, const char * argv[]) {
+    while (true) {
     selectAndRunFunctionUsingStdin("Select game", {
         {"Candy Crush",runCandyCrush},
         {"Tic Tac Toe", runTicTacToe}
     });
+    }
     return 0;
 }
 

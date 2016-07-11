@@ -1,7 +1,7 @@
 
 #include "GameBoard.hpp"
 
-
+// No idea why these functions can't be in the .hpp file :(
 namespace GameBoard {
     std::ostream& operator<<(std::ostream& os, const CellPosition& cellPosition) {
         os << cellPosition.row << "," << cellPosition.column;

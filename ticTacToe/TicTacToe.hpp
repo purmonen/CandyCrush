@@ -54,9 +54,6 @@ public:
     
     static GameResult run(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer, bool showOutput = true);
     static TestResult runMany(TicTacToePlayer& whitePlayer, TicTacToePlayer& blackPlayer, int numberOfGames);
-    
-    
-
 };
 
 std::ostream& operator<<(std::ostream& os, const TicTacToe& game);
