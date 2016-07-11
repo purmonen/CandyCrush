@@ -38,13 +38,7 @@ std::string CandyCrushGreedyBot::description() const {
     return "Greedy";
 }
 
-
-CandyCrushMonteCarloBot::~CandyCrushMonteCarloBot() {
-//    std::cout << "Number of states in monte carlo: " << numberOfGames.size() << std::endl;
-    //        for (auto games: numberOfGames) {
-    //            std::cout << games.second << " - " << totalScore[games.first] << std::endl;
-    //        }
-}
+CandyCrushMonteCarloBot::~CandyCrushMonteCarloBot() {}
 
 void CandyCrushMonteCarloBot::simulate(const CandyCrush& game) const {
     std::unordered_set<CandyCrush> visitedStates;
@@ -54,7 +48,27 @@ void CandyCrushMonteCarloBot::simulate(const CandyCrush& game) const {
     
     while (!nextState.gameOver()) {
         auto legalMoves = nextState.legalMoves();
-        nextState = nextState.gameForMove(legalMoves[rand() % legalMoves.size()]);
+        auto bestNextState = nextState.gameForMove(legalMoves[0]);
+        auto bestNextStateValue = std::numeric_limits<int>::min();
+        for (auto move: legalMoves) {
+            auto possibleNextState = nextState.gameForMove(move);
+            
+            // Expand nodes if there are unexplored ones
+            if (numberOfGames.find(possibleNextState) == numberOfGames.end()) {
+                bestNextState = possibleNextState;
+                break;
+            }
+            
+            // Otherwise select the one with best upper confidence bound
+            auto c = 1;
+            auto value = totalScore[possibleNextState] / ((double)numberOfGames[possibleNextState]) + c * sqrt((log((double)numberOfGames[nextState]) / ((double)numberOfGames[possibleNextState])));
+            if (value > bestNextStateValue) {
+                bestNextStateValue = value;
+                bestNextState = possibleNextState;
+            }
+        }
+        
+        nextState = bestNextState;
         visitedStates.insert(nextState);
     }
     
@@ -73,21 +87,18 @@ GameBoard::CellSwapMove CandyCrushMonteCarloBot::selectMove(const CandyCrush& ga
         nextStates.push_back({move, nextState});
     }
     
-    for (auto i = 0; i < 3; i++) {
+    for (auto i = 0; i < 2; i++) {
         for (auto nextState: nextStates) {
             simulate(nextState.second);
         }
     }
     
     auto bestWinPercentage = -1;
-    
     auto bestMove = nextStates[0].first;
     for (auto nextStateAndMove: nextStates) {
         auto nextState = nextStateAndMove.second;
         if (numberOfGames.find(nextState) != numberOfGames.end()) {
-            //std::cout << "Hm:" << " - " << numberOfGames[nextState] << " - " << totalScore[nextStateAndMove.second] << std::endl;
-            
-            auto winPercentage = totalScore[nextState] / (double)numberOfGames[nextState];
+            auto winPercentage = (double)totalScore[nextState]/(double)numberOfGames[nextState];
             if (winPercentage > bestWinPercentage) {
                 bestWinPercentage = winPercentage;
                 bestMove = nextStateAndMove.first;
@@ -101,6 +112,7 @@ GameBoard::CellSwapMove CandyCrushMonteCarloBot::selectMove(const CandyCrush& ga
     }
     return bestMove;
 }
+
 
 std::string CandyCrushMonteCarloBot::description() const {
     return "Monte Carlo";

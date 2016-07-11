@@ -67,8 +67,11 @@ void runCandyCrushWithBots() {
     auto greedyBot = CandyCrushGreedyBot();
     auto monteCarloBot = CandyCrushMonteCarloBot();
     std::vector<CandyCrushPlayer*> players = {&randomBot, &greedyBot, &monteCarloBot};
+    
+    auto numberOfGames = 20;
+    std::cout << "Average score for " << numberOfGames << " games" << std::endl;
     for (auto player: players) {
-        std::cout << "\t" << (player->description()) << ": " << CandyCrush::run(*player, 10) << " points" << std::endl;
+        std::cout << "\t" << (player->description()) << ": " << CandyCrush::run(*player, numberOfGames) << " points" << std::endl;
     }
 }
 
@@ -96,13 +99,15 @@ void runTicTacToeWithBots() {
     auto minimaxBot = MiniMaxBot();
     auto monteCarlo = MonteCarloBot();
     std::vector<TicTacToePlayer*>  bots = {&randomBot, &minimaxBot, &monteCarlo};
+    auto numberOfGames = 50;
+    std::cout << "Results for " << numberOfGames << " games" << std::endl;
     for (auto i = 0; i < bots.size(); i++) {
         for (auto j = 0; j < bots.size(); j++) {
             auto whitePlayer = bots[i];
             auto blackPlayer = bots[j];
-            TicTacToe::TestResult testResult = TicTacToe::runMany(*whitePlayer, *blackPlayer, 50);
+            TicTacToe::TestResult testResult = TicTacToe::runMany(*whitePlayer, *blackPlayer, numberOfGames);
             std::cout << "\t" << (whitePlayer->description()) << " VS " << (blackPlayer->description()) << ": ";
-            std::cout << testResult.wins/(double)testResult.numberOfGames()*100 << " wins, " << testResult.draws/(double)testResult.numberOfGames()*100 << " draws, " << testResult.losses/(double)testResult.numberOfGames()*100 << " losses" << std::endl;
+            std::cout << testResult.wins/(double)testResult.numberOfGames()*100 << "% wins, " << testResult.draws/(double)testResult.numberOfGames()*100 << "% draws, " << testResult.losses/(double)testResult.numberOfGames()*100 << "% losses" << std::endl;
         }
     }
 }
