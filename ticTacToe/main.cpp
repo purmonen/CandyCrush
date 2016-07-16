@@ -41,9 +41,9 @@
 //
 //void testGameHashing() {
 //    std::unordered_map<CandyCrush, int> counts;
-//    
+//
 //    auto start = std::chrono::high_resolution_clock::now();
-//    
+//
 //    for (auto i = 0; i < 2000; i++) {
 //        CandyCrush game;
 //        while (!game.gameOver()) {
@@ -53,11 +53,11 @@
 //            game.play(move);
 //        }
 //    }
-//    
+//
 //    auto end = std::chrono::high_resolution_clock::now();
-//    
+//
 //    std::cout << "Execution time (us): " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << std::endl;
-//    
+//
 //    std::cout << "Hashed games: " << counts.size() << std::endl;
 //}
 //
@@ -71,7 +71,7 @@
 //    auto greedyBot = CandyCrushGreedyBot();
 //    auto monteCarloBot = CandyCrushMonteCarloBot();
 //    std::vector<CandyCrushPlayer*> players = {&randomBot, &greedyBot, &monteCarloBot};
-//    
+//
 //    auto numberOfGames = 20;
 //    std::cout << "Average score for " << numberOfGames << " games" << std::endl;
 //    for (auto player: players) {
@@ -92,7 +92,7 @@
 //    auto minimaxBot = MiniMaxBot();
 //    auto monteCarlo = MonteCarloBot();
 //    std::vector<std::pair<std::string, TicTacToePlayer*>>  players = {{"You", &humanPlayer}, {"Random", &randomBot}, {"Minimax", &minimaxBot}, {"Monte Carlo", &monteCarlo}};
-//    
+//
 //    auto whitePlayer = selectValueFromArrayUsingStdin("Select white player", players);
 //    auto blackPlayer = selectValueFromArrayUsingStdin("Select black player", players);
 //    TicTacToe::run(*whitePlayer, *blackPlayer);
@@ -137,19 +137,19 @@
 //{
 //    //Loading success flag
 //    bool success = true;
-//    
+//
 //    //Load splash image
-//    
+//
 //    const auto filePath = "assets/BackGround.jpg";
-//    
+//
 //    gHelloWorld = IMG_Load(filePath);
-//    
+//
 //    if( gHelloWorld == NULL )
 //    {
 //        printf( "Unable to load image %s! SDL Error: %s\n", filePath, SDL_GetError() );
 //        success = false;
 //    }
-//    
+//
 //    return success;
 //}
 //
@@ -163,7 +163,7 @@
 //{
 //    //Initialization flag
 //    bool success = true;
-//    
+//
 //    //Initialize SDL
 //    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
 //    {
@@ -185,7 +185,7 @@
 //            gScreenSurface = SDL_GetWindowSurface( gWindow );
 //        }
 //    }
-//    
+//
 //    return success;
 //}
 //
@@ -194,11 +194,11 @@
 //    //Deallocate surface
 //    SDL_FreeSurface( gHelloWorld );
 //    gHelloWorld = NULL;
-//    
+//
 //    //Destroy window
 //    SDL_DestroyWindow( gWindow );
 //    gWindow = NULL;
-//    
+//
 //    //Quit SDL subsystems
 //    SDL_Quit();
 //}
@@ -219,13 +219,13 @@
 //        else
 //        {
 //            //Apply the image
-//            
-//            
+//
+//
 //            auto rect = SDL_Rect{10, 10, 10, 10};
 //            SDL_BlitSurface( gHelloWorld, &rect, gScreenSurface, &rect );
 //            SDL_UpdateWindowSurface( gWindow );
-//            
-//            
+//
+//
 //
 //        }
 //    }
@@ -233,14 +233,14 @@
 //
 //int main(int argc, const char * argv[]) {
 //
-//    
+//
 //    runGui();
-//    
+//
 //    int a;
 //    std::cin >> a;
 //    return 0;
 //    SDL_assert_always(1==1);
-//    
+//
 //    while (true) {
 //    selectAndRunFunctionUsingStdin("Select game", {
 //        {"Candy Crush",runCandyCrush},
@@ -256,9 +256,7 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-//Screen dimension constants
-const int SCREEN_WIDTH = 755;
-const int SCREEN_HEIGHT = 600;
+
 
 //Starts up SDL and creates window
 bool init();
@@ -269,69 +267,7 @@ bool loadMedia();
 //Frees media and shuts down SDL
 void close();
 
-//The window we'll be rendering to
-SDL_Window* gWindow = NULL;
 
-//The surface contained by the window
-SDL_Surface* gScreenSurface = NULL;
-
-//The image we will load and show on the screen
-SDL_Surface* gXOut = NULL;
-
-bool init()
-{
-    //Initialization flag
-    bool success = true;
-    
-    
-    
-    
-    //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-    {
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-        success = false;
-    }
-    else
-    {
-        
-        if (TTF_Init() < 0) {
-            printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-            throw;
-        }
-        //Create window
-        gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-        if( gWindow == NULL )
-        {
-            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
-            success = false;
-        }
-        else
-        {
-            //Get window surface
-            
-            gScreenSurface = SDL_GetWindowSurface( gWindow );
-        }
-    }
-    
-    return success;
-}
-
-bool loadMedia()
-{
-    //Loading success flag
-    bool success = true;
-    
-    //Load splash image
-    gXOut = IMG_Load( "assets/BackGround.jpg" );
-    if( gXOut == NULL )
-    {
-        printf( "Unable to load image %s! SDL Error: %s\n", "03_event_driven_programming/x.bmp", SDL_GetError() );
-        success = false;
-    }
-    
-    return success;
-}
 
 
 SDL_Surface* loadImage(const std::string imagePath)
@@ -340,23 +276,36 @@ SDL_Surface* loadImage(const std::string imagePath)
 }
 
 
-void close()
-{
-    //Deallocate surface
-    SDL_FreeSurface( gXOut );
-    gXOut = NULL;
-    
-    //Destroy window
-    SDL_DestroyWindow( gWindow );
-    gWindow = NULL;
-    
-    //Quit SDL subsystems
-    SDL_Quit();
+//void close()
+//{
+//    //Deallocate surface
+//    SDL_FreeSurface( gXOut );
+//    gXOut = NULL;
+//
+//    //Destroy window
+//    SDL_DestroyWindow( gWindow );
+//    gWindow = NULL;
+//
+//    //Quit SDL subsystems
+//    SDL_Quit();
+//}
+
+
+SDL_Surface* surfaceForText(std::string text, SDL_Rect Message_rect) {
+    TTF_Font* Sans = TTF_OpenFont("/Library/Fonts/Arial.ttf", 24); //this opens a font style and sets a size
+    SDL_Color White = {255, 255, 255};  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
+    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, text.c_str(), White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
+    if (surfaceMessage == nullptr) {
+        std::cout << "SDL_Surface Error: " << SDL_GetError() << std::endl;
+    }
+    return surfaceMessage;
 }
 
-void drawBoard(const CandyCrush& game, SDL_Rect drawArea) {
+void drawBoard(SDL_Surface* screenSurface, const CandyCrush& game, SDL_Rect drawArea) {
+    
+    auto backgroundImage = IMG_Load( "assets/BackGround.jpg" );
     //Apply the image
-    SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
+    SDL_BlitSurface(backgroundImage, NULL, screenSurface, NULL );
     
     const int numberOfRows = (int)game.getGameBoard().rows;
     const int numberOfColumns = (int)game.getGameBoard().columns;
@@ -380,42 +329,14 @@ void drawBoard(const CandyCrush& game, SDL_Rect drawArea) {
             auto image = IMG_Load(imagePath);
             
             auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
-            SDL_BlitSurface( image, NULL, gScreenSurface, &destination );
+            SDL_BlitSurface( image, NULL, screenSurface, &destination );
         }
         
     }
     
-    TTF_Font* Sans = TTF_OpenFont("/Library/Fonts/Arial.ttf", 24); //this opens a font style and sets a size
     
-    SDL_Color White = {255, 255, 255};  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
-    
-    
-    auto scoreString = "Score: " + std::to_string(game.getScore());
-    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, scoreString.c_str(), White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
-    
-    if (surfaceMessage == nullptr) {
-        std::cout << "SDL_Surface Error: " << SDL_GetError() << std::endl;
-        //                                throw;
-    }
-    
-    SDL_Renderer *renderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-    //
-    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); //now you can convert it into a texture
-    //
-    SDL_Rect Message_rect; //create a rect
-    Message_rect.x = 0;  //controls the rect's x coordinate
-    Message_rect.y = 0; // controls the rect's y coordinte
-    Message_rect.w = 100; // controls the width of the rect
-    Message_rect.h = 100; // controls the height of the rect
-    
-    //Mind you that (0,0) is on the top left of the window/screen, think a rect as the text's box, that way it would be very simple to understance
-    
-    //Now since it's a texture, you have to put RenderCopy in your game loop area, the area where the whole code executes
-    
-    
-    SDL_BlitSurface( surfaceMessage, NULL, gScreenSurface, &Message_rect );
-    
-
+    auto scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()), {0,0,100,100});
+    SDL_BlitSurface(scoreLabel, NULL, screenSurface, NULL );
 }
 
 
@@ -433,97 +354,99 @@ int main( int argc, char* args[] )
     int lastX = -1;
     int lastY = -1;
     
-    //Start up SDL and create window
-    if( !init() )
-    {
-        printf( "Failed to initialize!\n" );
+    //Screen dimension constants
+    const int SCREEN_WIDTH = 755;
+    const int SCREEN_HEIGHT = 600;
+    SDL_Window* window = NULL;
+    SDL_Surface* screenSurface = NULL;
+    
+    
+    auto start = std::chrono::high_resolution_clock::now();
+    
+    auto numberOfSeconds = 60;
+    
+    
+    //Initialize SDL
+    if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+        return 0;
     }
-    else
+    
+    if (TTF_Init() < 0) {
+        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+        return 0;
+    }
+    //Create window
+    window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+    if( window == NULL )
     {
-        //Load media
-        if( !loadMedia() )
+        printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
+        return 0;
+    }
+    
+    screenSurface = SDL_GetWindowSurface( window );
+    
+    //Main loop flag
+    bool quit = false;
+    
+    //Event handler
+    SDL_Event e;
+    
+    drawBoard(screenSurface, game, drawArea);
+    SDL_UpdateWindowSurface( window );
+    
+    //While application is running
+    while( !quit )
+    {
+        //Handle events on queue
+        while( SDL_PollEvent( &e ) != 0 )
         {
-            printf( "Failed to load media!\n" );
-        }
-        else
-        {
-            //Main loop flag
-            bool quit = false;
+            //User requests quit
             
-            //Event handler
-            SDL_Event e;
+            if( e.type == SDL_QUIT ) {
+                quit = true;
+            }
             
-            drawBoard(game, drawArea);
-            
-            
-
-            
-            //While application is running
-            while( !quit )
-            {
-                //Handle events on queue
-                while( SDL_PollEvent( &e ) != 0 )
-                {
-                    //User requests quit
-                    
-                    if( e.type == SDL_QUIT )
-                    {
-                        quit = true;
+            if (e.type == SDL_MOUSEBUTTONDOWN){
+                int x, y;
+                
+                SDL_GetMouseState(&x, &y);
+                x -= drawArea.x;
+                y -= drawArea.y;
+                
+                if (lastX == -1 && lastY == -1) {
+                    lastX = x;
+                    lastY = y;
+                } else {
+                    auto move = GameBoard::CellSwapMove(GameBoard::CellPosition(y/cellHeight, x/cellWidth), GameBoard::CellPosition(lastY/cellHeight, lastX/cellWidth));
+                    std::cout << move;
+                    if (game.play(move)) {
+                        std::cout << "Score: " << game.getScore() << std::endl;
+                    } else {
+                        std::cout << "Could not make the move" << std::endl;
                     }
-                    
-                    if (e.type == SDL_MOUSEBUTTONDOWN){
-                        int x, y;
-                        
-                        SDL_GetMouseState(&x, &y);
-                        x -= drawArea.x;
-                        y -= drawArea.y;
-                        
-                        if (lastX == -1 && lastY == -1) {
-                            lastX = x;
-                            lastY = y;
-                        } else {
-                            auto move = GameBoard::CellSwapMove(GameBoard::CellPosition(y/cellHeight, x/cellWidth), GameBoard::CellPosition(lastY/cellHeight, lastX/cellWidth));
-                            std::cout << move;
-                            if (game.play(move)) {
-                                std::cout << "Score: " << game.getScore() << std::endl;
-                            } else {
-                                std::cout << "Could not make the move" << std::endl;
-                            }
-                            lastX = -1;
-                            lastY = -1;
-                            
-                            
-                            
-                            drawBoard(game, drawArea);
-                            
-
-                        }
-                        
-                        //std::cout << x << "," << y << std::endl;
-                        //std::cout << x/cellWidth << "," << y/cellHeight << std::endl;
-                       
-                    }
+                    lastX = -1;
+                    lastY = -1;
+                    drawBoard(screenSurface, game, drawArea);
+                    SDL_UpdateWindowSurface( window );
                 }
                 
-                
-                
-                
-//                
-//                //Apply the image
-//                SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
-//                
-                
-//
-//                
-//                //Update the surface
-                SDL_UpdateWindowSurface( gWindow );
             }
+//            auto end = std::chrono::high_resolution_clock::now();
+//            auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+//            auto numberOfSecondsLeft = numberOfSeconds-duration;
+//            std::cout << "Execution time (us): " << numberOfSecondsLeft << std::endl;
+            //            surfaceForText(<#std::string text#>, <#SDL_Rect Message_rect#>)("Time left: " + std::to_string(numberOfSecondsLeft), {0,50,100,100});
+            
+            
+            
+            //                    auto bot = CandyCrushGreedyBot();
+            //                    game.play(bot.selectMove(game));
+            //                    drawBoard(game, drawArea);
+            //                    SDL_Delay(1000);
+            
         }
     }
-    
-    //Free resources and close SDL
-    close();
-    
     return 0;
 }
 
