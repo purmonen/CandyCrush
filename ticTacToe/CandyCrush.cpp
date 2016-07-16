@@ -1,7 +1,7 @@
 #include "CandyCrush.hpp"
 
 CandyCrush::Cell CandyCrush::randomCell() {
-    std::vector<CandyCrush::Cell> cells = {Green, Blue, Orange, Red};
+    std::vector<CandyCrush::Cell> cells = {Green, Blue, Purple, Red, Yellow};
     return cells[rand() % cells.size()];
 }
 
@@ -39,47 +39,55 @@ void CandyCrush::performMove(GameBoard::CellSwapMove move) {
         int numberOfMatches = 0;
         auto lastCell = gameBoard[row][0];
         for (auto column = 0; column < gameBoard.columns; column++) {
-            if (lastCell == gameBoard[row][column]) {
+            bool cellsMatched = lastCell == gameBoard[row][column];
+            if (cellsMatched) {
                 numberOfMatches++;
-            } else {
-                if (numberOfMatches >= 3) {
-                    score += scoreForMatches(numberOfMatches);
-                    for (auto matchedColumn = column-numberOfMatches; matchedColumn < column; matchedColumn++) {
-                        for (auto matchedRow = row-1; matchedRow >= 0; matchedRow--) {
-                            gameBoard[matchedRow+1][matchedColumn] = gameBoard[matchedRow][matchedColumn];
-                        }
-                        gameBoard[0][matchedColumn] = randomCell();
+            }
+            if ((!cellsMatched || column == gameBoard.rows -1 ) && numberOfMatches >= 3) {
+                score += scoreForMatches(numberOfMatches);
+                for (auto matchedColumn = column-numberOfMatches; matchedColumn < column; matchedColumn++) {
+                    for (auto matchedRow = row-1; matchedRow >= 0; matchedRow--) {
+                        gameBoard[matchedRow+1][matchedColumn] = gameBoard[matchedRow][matchedColumn];
                     }
+                    gameBoard[0][matchedColumn] = randomCell();
                 }
+            }
+            
+            if (!cellsMatched) {
                 numberOfMatches = 1;
             }
+            
             lastCell = gameBoard[row][column];
         }
     }
-    
     // Vertical matching
     for (auto column = 0; column < gameBoard.columns; column++) {
         int numberOfMatches = 0;
         auto lastCell = gameBoard[0][column];
         for (auto row = 0; row < gameBoard.rows; row++) {
-            if (lastCell == gameBoard[row][column]) {
+            bool cellsMatched = lastCell == gameBoard[row][column];
+            if (cellsMatched) {
                 numberOfMatches++;
-            } else {
-                if (numberOfMatches >= 3) {
-                    score += scoreForMatches(numberOfMatches);
-                    int prevRow = row-numberOfMatches-1;
-                    while (prevRow >= 0) {
-                        gameBoard[prevRow+numberOfMatches][column] = gameBoard[prevRow][column];
-                        prevRow--;
-                    }
-                    
-                    for (auto i = 0; i < numberOfMatches; i++) {
-                        gameBoard[i][column] = randomCell();
-                    }
-                    
+            }
+            if ((!cellsMatched || row == gameBoard.rows-1) && numberOfMatches >= 3) {
+                score += scoreForMatches(numberOfMatches);
+                int prevRow = row-numberOfMatches-1;
+                while (prevRow >= 0) {
+                    gameBoard[prevRow+numberOfMatches][column] = gameBoard[prevRow][column];
+                    prevRow--;
                 }
+                
+                for (auto i = 0; i < numberOfMatches; i++) {
+                    gameBoard[i][column] = randomCell();
+                }
+                
+                
+            }
+            
+            if (!cellsMatched) {
                 numberOfMatches = 1;
             }
+            
             lastCell = gameBoard[row][column];
         }
     }
@@ -137,7 +145,7 @@ std::vector<GameBoard::CellSwapMove> CandyCrush::legalMoves() const {
     return moves;
 }
 
- int CandyCrush::run(CandyCrushPlayer& player, bool showOutput = false) {
+int CandyCrush::run(CandyCrushPlayer& player, bool showOutput = false) {
     auto game = CandyCrush();
     while (!game.gameOver()) {
         if (showOutput) {
@@ -145,18 +153,18 @@ std::vector<GameBoard::CellSwapMove> CandyCrush::legalMoves() const {
         }
         game.play(player.selectMove(game));
     }
-     if (showOutput) {
-         std::cout << game;
-     }
+    if (showOutput) {
+        std::cout << game;
+    }
     return game.score;
 }
 
- int CandyCrush::run(CandyCrushPlayer& player, int numberOfGames) {
+int CandyCrush::run(CandyCrushPlayer& player, int numberOfGames) {
     auto totalScore = 0;
     for (int i = 0; i < numberOfGames; i++) {
         totalScore += run(player, false);
     }
-//    std::cout << "Average score: " << totalScore / numberOfGames << std::endl;
+    //    std::cout << "Average score: " << totalScore / numberOfGames << std::endl;
     return totalScore / numberOfGames;
 }
 
@@ -173,7 +181,8 @@ std::ostream& operator<<(std::ostream& os, const CandyCrush& game) {
     std::unordered_map<CandyCrush::Cell, std::string> cellString {
         {CandyCrush::Green, "O"},
         {CandyCrush::Blue, "-"},
-        {CandyCrush::Orange, "$"},
+        {CandyCrush::Purple, "$"},
+        {CandyCrush::Red, "&"},
         {CandyCrush::Red, "@"},
         //{CandyCrush::Purple, "!"}
     };

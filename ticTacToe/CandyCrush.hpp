@@ -18,14 +18,14 @@ public:
 
 class CandyCrush: public Game<GameBoard::CellSwapMove> {
 public:
-    enum Cell {Green, Blue, Orange, Red};
+    enum Cell {Green, Blue, Purple, Red, Yellow};
     //enum Cell {Green, Blue, Orange, Red, Purple};
     
 private:
-    int numberOfMovesLeft = 7;
+    int numberOfMovesLeft = 100;
     friend std::ostream& operator<<(std::ostream&, const CandyCrush&);
     GameBoard::GameBoard<6, 6, Cell> gameBoard = GameBoard::GameBoard<6, 6, Cell>([](auto rows, auto columns) {
-        std::vector<CandyCrush::Cell> cells = {Green, Blue, Orange, Red};
+        std::vector<CandyCrush::Cell> cells = {Green, Blue, Purple, Red, Yellow};
         return cells[rand() % cells.size()];
     });
     int score = 0;
