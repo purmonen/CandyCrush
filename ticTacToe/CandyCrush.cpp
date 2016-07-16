@@ -7,8 +7,12 @@ CandyCrush::Cell CandyCrush::randomCell() {
 
 // When randomly generating new cells some of them will create matches that must be cleared after each move and when initializing the game
 void CandyCrush::clearAllMatches() {
-    while (isLegalMove(GameBoard::CellSwapMove(GameBoard::CellPosition(0,0), GameBoard::CellPosition(0,0)))) {
+    while (true) {
+        auto oldScore = score;
         performMove(GameBoard::CellSwapMove(GameBoard::CellPosition(0,0), GameBoard::CellPosition(0,0)));
+        if (oldScore == score) {
+            break;
+        }
     }
 }
 

@@ -339,31 +339,34 @@ struct GameEngine {
         }
     }
     
+    
+    
     SDL_Surface* timeLeftLabel = nullptr;
     SDL_Surface* scoreLabel = nullptr;
     void render(SDL_Surface* screenSurface, const CandyCrush& game, SDL_Rect drawArea, size_t numberOfSecondsLeft) {
         //SDL_FillRect(screenSurface, NULL, 0x000000);
         SDL_BlitSurface(backgroundImage, NULL, screenSurface, NULL );
         
-        const int numberOfRows = (int)game.getGameBoard().rows;
-        const int numberOfColumns = (int)game.getGameBoard().columns;
-        const int cellHeight = drawArea.h / numberOfRows;
-        const int cellWidth = drawArea.w / numberOfColumns;
-        
         for (auto row = 0; row < game.getGameBoard().rows; row++) {
             for (auto column = 0; column < game.getGameBoard().columns; column++) {
                 auto cell = game.getGameBoard()[row][column];
                 auto image = cellImages[cell];
                 auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
+                
+                if (lastX != -1 && GameBoard::CellPosition(row, column) == cellPositionFromCoordinates(lastX, lastY)) {
+                    SDL_FillRect(screenSurface, &destination, 0b111);
+                }
                 SDL_BlitSurface( image, NULL, screenSurface, &destination );
             }
         }
-        if (scoreLabel != nullptr) {
-            SDL_FreeSurface(scoreLabel);
-        }
-        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
-        auto scoreLabelRect = SDL_Rect{0,0,100,100};
-        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
+//        if (scoreLabel != nullptr) {
+//            SDL_FreeSurface(scoreLabel);
+//        }
+//        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
+//        auto scoreLabelRect = SDL_Rect{0,0,100,100};
+        
+        
+//        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
         
 //        if (timeLeftLabel != nullptr) {
 //            SDL_FreeSurface(timeLeftLabel);
@@ -372,6 +375,11 @@ struct GameEngine {
 //        auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
 //        SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
         SDL_UpdateWindowSurface(window);
+    }
+    
+    
+    GameBoard::CellPosition cellPositionFromCoordinates(int x, int y) {
+        return GameBoard::CellPosition(y/cellHeight, x/cellWidth);
     }
     
     void run() {
@@ -394,24 +402,18 @@ struct GameEngine {
                     x -= drawArea.x;
                     y -= drawArea.y;
                     
-                    if (lastX == -1 && lastY == -1) {
-                        lastX = x;
-                        lastY = y;
-                    } else {
-                        auto move = GameBoard::CellSwapMove(GameBoard::CellPosition(y/cellHeight, x/cellWidth), GameBoard::CellPosition(lastY/cellHeight, lastX/cellWidth));
+                        auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
                         std::cout << move;
                         if (game.play(move)) {
                             std::cout << "Score: " << game.getScore() << std::endl;
+                            lastX = -1;
+                            lastY = -1;
                         } else {
                             std::cout << "Could not make the move" << std::endl;
+                            lastX = x;
+                            lastY = y;
                         }
-                        lastX = -1;
-                        lastY = -1;
-                        
-                    }
-                    
                 }
-
             }
             
             
