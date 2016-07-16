@@ -25,6 +25,10 @@ namespace GameBoard {
                 case Left: return CellPosition(row, column-1);
             }
         }
+        
+        bool operator ==(const CellPosition& position) const {
+            return row == position.row && column == position.column;
+        }
     };
     
     std::ostream& operator<<(std::ostream& os, const CellPosition& cellPosition);

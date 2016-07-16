@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		266C08F21D397177004F0349 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 266C08F11D397177004F0349 /* SDL2.framework */; };
 		266C08F41D397B46004F0349 /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 266C08F31D397B46004F0349 /* SDL2_image.framework */; };
+		266C08F61D39CE2A004F0349 /* SDL2_ttf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 266C08F51D39CE2A004F0349 /* SDL2_ttf.framework */; };
 		26721FF61D2938400032572C /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26721FF51D2938400032572C /* main.cpp */; };
 		26D1363C1D33038B00B71B0C /* CandyCrushPlayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D1363A1D33038B00B71B0C /* CandyCrushPlayer.cpp */; };
 		26D1363E1D33042900B71B0C /* CandyCrush.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 26D1363D1D33042900B71B0C /* CandyCrush.cpp */; };
@@ -32,6 +33,7 @@
 /* Begin PBXFileReference section */
 		266C08F11D397177004F0349 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		266C08F31D397B46004F0349 /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
+		266C08F51D39CE2A004F0349 /* SDL2_ttf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_ttf.framework; path = ../../../../Library/Frameworks/SDL2_ttf.framework; sourceTree = "<group>"; };
 		26721FF21D2938400032572C /* ticTacToe */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ticTacToe; sourceTree = BUILT_PRODUCTS_DIR; };
 		26721FF51D2938400032572C /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		26D136391D32C6D300B71B0C /* readme */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = readme; sourceTree = "<group>"; };
@@ -55,6 +57,7 @@
 			files = (
 				266C08F21D397177004F0349 /* SDL2.framework in Frameworks */,
 				266C08F41D397B46004F0349 /* SDL2_image.framework in Frameworks */,
+				266C08F61D39CE2A004F0349 /* SDL2_ttf.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +67,7 @@
 		26721FE91D2938400032572C = {
 			isa = PBXGroup;
 			children = (
+				266C08F51D39CE2A004F0349 /* SDL2_ttf.framework */,
 				266C08F31D397B46004F0349 /* SDL2_image.framework */,
 				266C08F11D397177004F0349 /* SDL2.framework */,
 				26721FF41D2938400032572C /* ticTacToe */,

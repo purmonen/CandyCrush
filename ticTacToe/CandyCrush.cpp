@@ -13,9 +13,19 @@ void CandyCrush::clearAllMatches() {
 }
 
 bool CandyCrush::isLegalMove(GameBoard::CellSwapMove move) const {
+    
     if (!gameBoard.isCellValid(move.from) || !gameBoard.isCellValid(move.to)) {
         return false;
     }
+    
+    
+    
+    auto adjacentCells = {move.from.cellAtDirection(GameBoard::Up), move.from.cellAtDirection(GameBoard::Right), move.from.cellAtDirection(GameBoard::Down), move.from.cellAtDirection(GameBoard::Left)};
+    
+    if (std::find(adjacentCells.begin(), adjacentCells.end(), move.to) == adjacentCells.end()) {
+        return false;
+    }
+    
     
     // Perform the move on a copy of the game
     auto game = *this;

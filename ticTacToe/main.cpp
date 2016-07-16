@@ -10,6 +10,8 @@
 #include <chrono>
 #include <SDL2/SDL.h>
 #include <SDL2_image/SDL_image.h>
+#include <SDL2_ttf/SDL_ttf.h>
+
 
 //template <typename ValueType>
 //ValueType selectValueFromArrayUsingStdin(std::string prompt,  std::vector<std::pair<std::string, ValueType>> values) {
@@ -281,6 +283,9 @@ bool init()
     //Initialization flag
     bool success = true;
     
+    
+    
+    
     //Initialize SDL
     if( SDL_Init( SDL_INIT_VIDEO ) < 0 )
     {
@@ -289,6 +294,11 @@ bool init()
     }
     else
     {
+        
+        if (TTF_Init() < 0) {
+            printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+            throw;
+        }
         //Create window
         gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
         if( gWindow == NULL )
@@ -299,6 +309,7 @@ bool init()
         else
         {
             //Get window surface
+            
             gScreenSurface = SDL_GetWindowSurface( gWindow );
         }
     }
@@ -373,6 +384,38 @@ void drawBoard(const CandyCrush& game, SDL_Rect drawArea) {
         }
         
     }
+    
+    TTF_Font* Sans = TTF_OpenFont("/Library/Fonts/Arial.ttf", 24); //this opens a font style and sets a size
+    
+    SDL_Color White = {255, 255, 255};  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
+    
+    
+    auto scoreString = "Score: " + std::to_string(game.getScore());
+    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, scoreString.c_str(), White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
+    
+    if (surfaceMessage == nullptr) {
+        std::cout << "SDL_Surface Error: " << SDL_GetError() << std::endl;
+        //                                throw;
+    }
+    
+    SDL_Renderer *renderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+    //
+    SDL_Texture* Message = SDL_CreateTextureFromSurface(renderer, surfaceMessage); //now you can convert it into a texture
+    //
+    SDL_Rect Message_rect; //create a rect
+    Message_rect.x = 0;  //controls the rect's x coordinate
+    Message_rect.y = 0; // controls the rect's y coordinte
+    Message_rect.w = 100; // controls the width of the rect
+    Message_rect.h = 100; // controls the height of the rect
+    
+    //Mind you that (0,0) is on the top left of the window/screen, think a rect as the text's box, that way it would be very simple to understance
+    
+    //Now since it's a texture, you have to put RenderCopy in your game loop area, the area where the whole code executes
+    
+    
+    SDL_BlitSurface( surfaceMessage, NULL, gScreenSurface, &Message_rect );
+    
+
 }
 
 
@@ -412,6 +455,9 @@ int main( int argc, char* args[] )
             
             drawBoard(game, drawArea);
             
+            
+
+            
             //While application is running
             while( !quit )
             {
@@ -449,6 +495,8 @@ int main( int argc, char* args[] )
                             
                             
                             drawBoard(game, drawArea);
+                            
+
                         }
                         
                         //std::cout << x << "," << y << std::endl;
