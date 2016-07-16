@@ -153,8 +153,8 @@
 //    return success;
 //}
 //
-//const int SCREEN_WIDTH = 640;
-//const int SCREEN_HEIGHT = 480;
+//const int windowWidth = 640;
+//const int windowHeight = 480;
 //
 //
 //
@@ -173,7 +173,7 @@
 //    else
 //    {
 //        //Create window
-//        gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+//        gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN );
 //        if( gWindow == NULL )
 //        {
 //            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
@@ -257,42 +257,14 @@
 #include <stdio.h>
 
 
-
-//Starts up SDL and creates window
-bool init();
-
-//Loads media
-bool loadMedia();
-
-//Frees media and shuts down SDL
-void close();
-
-
-
-
 SDL_Surface* loadImage(const std::string imagePath)
 {
     return IMG_Load( "assets/BackGround.jpg" );
 }
 
 
-//void close()
-//{
-//    //Deallocate surface
-//    SDL_FreeSurface( gXOut );
-//    gXOut = NULL;
-//
-//    //Destroy window
-//    SDL_DestroyWindow( gWindow );
-//    gWindow = NULL;
-//
-//    //Quit SDL subsystems
-//    SDL_Quit();
-//}
-
-
-SDL_Surface* surfaceForText(std::string text, SDL_Rect Message_rect) {
-    TTF_Font* Sans = TTF_OpenFont("/Library/Fonts/Arial.ttf", 24); //this opens a font style and sets a size
+SDL_Surface* surfaceForText(std::string text) {
+    TTF_Font* Sans = TTF_OpenFont("/Library/Fonts/Arial.ttf", 54); //this opens a font style and sets a size
     SDL_Color White = {255, 255, 255};  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
     SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, text.c_str(), White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
     if (surfaceMessage == nullptr) {
@@ -301,52 +273,18 @@ SDL_Surface* surfaceForText(std::string text, SDL_Rect Message_rect) {
     return surfaceMessage;
 }
 
-void drawBoard(SDL_Surface* screenSurface, const CandyCrush& game, SDL_Rect drawArea) {
+struct GameEngine {
     
-    auto backgroundImage = IMG_Load( "assets/BackGround.jpg" );
-    //Apply the image
-    SDL_BlitSurface(backgroundImage, NULL, screenSurface, NULL );
-    
-    const int numberOfRows = (int)game.getGameBoard().rows;
-    const int numberOfColumns = (int)game.getGameBoard().columns;
-    const int cellHeight = drawArea.h / numberOfRows;
-    const int cellWidth = drawArea.w / numberOfColumns;
-    
-    for (auto row = 0; row < game.getGameBoard().rows; row++) {
-        for (auto column = 0; column < game.getGameBoard().columns; column++) {
-            auto cell = game.getGameBoard()[row][column];
-            
-            std::unordered_map<CandyCrush::Cell, std::string> cellImages = {
-                {CandyCrush::Blue, "assets/Blue.png"},
-                {CandyCrush::Green, "assets/Green.png"},
-                {CandyCrush::Red, "assets/Red.png"},
-                {CandyCrush::Purple, "assets/Purple.png"},
-                {CandyCrush::Yellow, "assets/Yellow.png"},
-            };
-            
-            auto imagePath = cellImages[cell].c_str();
-            
-            auto image = IMG_Load(imagePath);
-            
-            auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
-            SDL_BlitSurface( image, NULL, screenSurface, &destination );
-        }
-        
-    }
+    std::unordered_map<CandyCrush::Cell, SDL_Surface*> cellImages;
+    SDL_Surface* backgroundImage = nullptr;
+    SDL_Window* window = nullptr;
+    SDL_Surface* screenSurface = nullptr;
     
     
-    auto scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()), {0,0,100,100});
-    SDL_BlitSurface(scoreLabel, NULL, screenSurface, NULL );
-}
-
-
-
-int main( int argc, char* args[] )
-{
     CandyCrush game;
     const int numberOfRows = (int)game.getGameBoard().rows;
     const int numberOfColumns = (int)game.getGameBoard().columns;
-    auto drawArea = SDL_Rect{340,110,320,320};
+    const SDL_Rect drawArea = SDL_Rect{340,110,320,320};
     const int cellHeight = drawArea.h / numberOfRows;
     const int cellWidth = drawArea.w / numberOfColumns;
     
@@ -355,98 +293,144 @@ int main( int argc, char* args[] )
     int lastY = -1;
     
     //Screen dimension constants
-    const int SCREEN_WIDTH = 755;
-    const int SCREEN_HEIGHT = 600;
-    SDL_Window* window = NULL;
-    SDL_Surface* screenSurface = NULL;
+    const int windowWidth = 755;
+    const int windowHeight = 600;
     
-    
-    auto start = std::chrono::high_resolution_clock::now();
-    
-    auto numberOfSeconds = 60;
-    
-    
-    //Initialize SDL
-    if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-        return 0;
+    GameEngine() {
+        if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
+            printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+            throw;
+        }
+        
+        if (TTF_Init() < 0) {
+            printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
+            throw;
+        }
+
+        window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
+        if( window == nullptr) {
+            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
+            throw;
+        }
+        
+        screenSurface = SDL_GetWindowSurface( window );
+        
+        // Load assets
+        cellImages = {
+            {CandyCrush::Blue, IMG_Load("assets/Blue.png")},
+            {CandyCrush::Green, IMG_Load("assets/Green.png")},
+            {CandyCrush::Red, IMG_Load("assets/Red.png")},
+            {CandyCrush::Purple, IMG_Load("assets/Purple.png")},
+            {CandyCrush::Yellow, IMG_Load("assets/Yellow.png")},
+        };
+        backgroundImage = IMG_Load("assets/BackGround.jpg");
     }
     
-    if (TTF_Init() < 0) {
-        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
-        return 0;
-    }
-    //Create window
-    window = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-    if( window == NULL )
-    {
-        printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
-        return 0;
-    }
-    
-    screenSurface = SDL_GetWindowSurface( window );
-    
-    //Main loop flag
-    bool quit = false;
-    
-    //Event handler
-    SDL_Event e;
-    
-    drawBoard(screenSurface, game, drawArea);
-    SDL_UpdateWindowSurface( window );
-    
-    //While application is running
-    while( !quit )
-    {
-        //Handle events on queue
-        while( SDL_PollEvent( &e ) != 0 )
-        {
-            //User requests quit
-            
-            if( e.type == SDL_QUIT ) {
-                quit = true;
-            }
-            
-            if (e.type == SDL_MOUSEBUTTONDOWN){
-                int x, y;
-                
-                SDL_GetMouseState(&x, &y);
-                x -= drawArea.x;
-                y -= drawArea.y;
-                
-                if (lastX == -1 && lastY == -1) {
-                    lastX = x;
-                    lastY = y;
-                } else {
-                    auto move = GameBoard::CellSwapMove(GameBoard::CellPosition(y/cellHeight, x/cellWidth), GameBoard::CellPosition(lastY/cellHeight, lastX/cellWidth));
-                    std::cout << move;
-                    if (game.play(move)) {
-                        std::cout << "Score: " << game.getScore() << std::endl;
-                    } else {
-                        std::cout << "Could not make the move" << std::endl;
-                    }
-                    lastX = -1;
-                    lastY = -1;
-                    drawBoard(screenSurface, game, drawArea);
-                    SDL_UpdateWindowSurface( window );
-                }
-                
-            }
-//            auto end = std::chrono::high_resolution_clock::now();
-//            auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
-//            auto numberOfSecondsLeft = numberOfSeconds-duration;
-//            std::cout << "Execution time (us): " << numberOfSecondsLeft << std::endl;
-            //            surfaceForText(<#std::string text#>, <#SDL_Rect Message_rect#>)("Time left: " + std::to_string(numberOfSecondsLeft), {0,50,100,100});
-            
-            
-            
-            //                    auto bot = CandyCrushGreedyBot();
-            //                    game.play(bot.selectMove(game));
-            //                    drawBoard(game, drawArea);
-            //                    SDL_Delay(1000);
-            
+    ~GameEngine() {
+        for (auto cellImage: cellImages) {
+            SDL_FreeSurface(cellImage.second);
+        }
+        SDL_FreeSurface(backgroundImage);
+        if (timeLeftLabel != nullptr) {
+            SDL_FreeSurface(timeLeftLabel);
+        }
+        if (scoreLabel != nullptr) {
+            SDL_FreeSurface(scoreLabel);
         }
     }
+    
+    SDL_Surface* timeLeftLabel = nullptr;
+    SDL_Surface* scoreLabel = nullptr;
+    void render(SDL_Surface* screenSurface, const CandyCrush& game, SDL_Rect drawArea, size_t numberOfSecondsLeft) {
+        //SDL_FillRect(screenSurface, NULL, 0x000000);
+        SDL_BlitSurface(backgroundImage, NULL, screenSurface, NULL );
+        
+        const int numberOfRows = (int)game.getGameBoard().rows;
+        const int numberOfColumns = (int)game.getGameBoard().columns;
+        const int cellHeight = drawArea.h / numberOfRows;
+        const int cellWidth = drawArea.w / numberOfColumns;
+        
+        for (auto row = 0; row < game.getGameBoard().rows; row++) {
+            for (auto column = 0; column < game.getGameBoard().columns; column++) {
+                auto cell = game.getGameBoard()[row][column];
+                auto image = cellImages[cell];
+                auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
+                SDL_BlitSurface( image, NULL, screenSurface, &destination );
+            }
+        }
+        if (scoreLabel != nullptr) {
+            SDL_FreeSurface(scoreLabel);
+        }
+        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
+        auto scoreLabelRect = SDL_Rect{0,0,100,100};
+        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
+        
+//        if (timeLeftLabel != nullptr) {
+//            SDL_FreeSurface(timeLeftLabel);
+//        }
+//        timeLeftLabel = surfaceForText(std::to_string(numberOfSecondsLeft));
+//        auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
+//        SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
+        SDL_UpdateWindowSurface(window);
+    }
+    
+    void run() {
+        bool quit = false;
+        SDL_Event e;
+        
+        auto start = std::chrono::high_resolution_clock::now();
+        auto numberOfSeconds = 60;
+        render(screenSurface, game, drawArea, numberOfSeconds);
+        while( !quit ) {
+            while( SDL_PollEvent( &e ) != 0 ) {
+                if( e.type == SDL_QUIT ) {
+                    quit = true;
+                }
+                
+                if (e.type == SDL_MOUSEBUTTONDOWN){
+                    int x, y;
+                    
+                    SDL_GetMouseState(&x, &y);
+                    x -= drawArea.x;
+                    y -= drawArea.y;
+                    
+                    if (lastX == -1 && lastY == -1) {
+                        lastX = x;
+                        lastY = y;
+                    } else {
+                        auto move = GameBoard::CellSwapMove(GameBoard::CellPosition(y/cellHeight, x/cellWidth), GameBoard::CellPosition(lastY/cellHeight, lastX/cellWidth));
+                        std::cout << move;
+                        if (game.play(move)) {
+                            std::cout << "Score: " << game.getScore() << std::endl;
+                        } else {
+                            std::cout << "Could not make the move" << std::endl;
+                        }
+                        lastX = -1;
+                        lastY = -1;
+                        
+                    }
+                    
+                }
+
+            }
+            
+            
+            auto end = std::chrono::high_resolution_clock::now();
+            auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
+            auto numberOfSecondsLeft = numberOfSeconds-duration;
+            //std::cout << "Execution time (us): " << numberOfSecondsLeft << std::endl;
+            render(screenSurface, game, drawArea, numberOfSecondsLeft);
+        }
+
+    }
+    
+};
+
+
+int main( int argc, char* args[] )
+{
+    GameEngine gameEngine;
+    gameEngine.run();
     return 0;
 }
 
