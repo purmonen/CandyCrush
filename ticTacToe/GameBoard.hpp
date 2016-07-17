@@ -12,10 +12,11 @@ namespace GameBoard {
     enum Direction {Up, Right, Down, Left};
     
     struct CellPosition {
-        size_t row;
-        size_t column;
+        size_t row = 0;
+        size_t column = 0;
         
         CellPosition(size_t row, size_t column): row(row), column(column) {}
+        CellPosition() {}
         
         CellPosition cellAtDirection(Direction direction) {
             switch (direction) {
@@ -130,6 +131,23 @@ namespace GameBoard {
                 }
             }
             return true;
+        }
+    };
+}
+
+namespace std {
+    
+    template <>
+    struct hash<GameBoard::CellPosition>
+    {
+        std::size_t operator()(const GameBoard::CellPosition& position) const
+        {
+            using std::size_t;
+            using std::hash;
+            using std::string;
+            auto seed = position.row;
+            seed ^= position.column + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+            return seed;
         }
     };
 }

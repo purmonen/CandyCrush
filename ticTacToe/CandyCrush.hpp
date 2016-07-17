@@ -16,9 +16,12 @@ public:
     virtual std::string description() const = 0;
 };
 
-class CandyCrush: public Game<GameBoard::CellSwapMove> {
+struct CandyCrushGameBoardChange;
+
+class CandyCrush {
 public:
     enum Cell {Green, Blue, Purple, Red, Yellow};
+    typedef std::function<void(CandyCrushGameBoardChange)> GameBoardChangeCallback;
     //enum Cell {Green, Blue, Orange, Red, Purple};
     
 private:
@@ -30,11 +33,11 @@ private:
     });
     int score = 0;
     Cell randomCell();
-    void clearAllMatches();
+    void clearAllMatches(GameBoardChangeCallback callback = nullptr);
     
     int scoreForMatches(int numberOfMatches);
-    void performMove(GameBoard::CellSwapMove move);
-    
+//    void performMove(GameBoard::CellSwapMove move);
+    void performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback = nullptr);
 public:
     CandyCrush();
     const GameBoard::GameBoard<6, 6, Cell>& getGameBoard() const;
@@ -42,7 +45,10 @@ public:
     bool operator==(const CandyCrush & game) const;
     int getScore() const;
     int getNumberOfMovesLeft() const;
-    bool play(GameBoard::CellSwapMove move);
+    
+    
+    
+    bool play(GameBoard::CellSwapMove move, GameBoardChangeCallback callback = nullptr);
     bool gameOver() const;
     std::vector<GameBoard::CellSwapMove> legalMoves() const;
     static int run(CandyCrushPlayer& player, bool showOutput);
@@ -77,6 +83,17 @@ namespace std {
     };
 }
 
+struct CandyCrushGameBoardChange {
+    std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> cellPositions;
+    std::unordered_set<GameBoard::CellPosition> removedCells;
+//    std::unordered_set<GameBoard::CellPosition>
+    CandyCrush game;
+    std::vector<std::tuple<GameBoard::CellPosition, CandyCrush::Cell, int>> newCells;
+    CandyCrushGameBoardChange(std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> cellPositions, std::unordered_set<GameBoard::CellPosition> removedCells, CandyCrush game, std::vector<std::tuple<GameBoard::CellPosition, CandyCrush::Cell, int>> newCells): cellPositions(cellPositions), removedCells(removedCells), game(game), newCells(newCells) {
+        
+    }
+    
+};
 
 std::ostream& operator<<(std::ostream& os, const CandyCrush& game);
 //

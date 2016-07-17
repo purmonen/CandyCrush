@@ -113,5 +113,163 @@
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ticTacToe/CandyCrush.cpp"
+            timestampString = "490424681.729813"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ticTacToe/CandyCrush.hpp"
+            timestampString = "490422637.521431"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "86"
+            endingLineNumber = "86">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ticTacToe/CandyCrush.cpp"
+            timestampString = "490426460.022775"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "116"
+            endingLineNumber = "116"
+            landmarkName = "CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ticTacToe/CandyCrush.cpp"
+            timestampString = "490426460.022775"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback)"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ticTacToe/GameBoard.hpp"
+            timestampString = "490426357.374569"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "124"
+            endingLineNumber = "124"
+            landmarkName = "operator==(const GameBoard &amp; gameBoard)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "GameBoard::GameBoard&lt;6ul, 6ul, CandyCrush::Cell&gt;::operator==(GameBoard::GameBoard&lt;6ul, 6ul, CandyCrush::Cell&gt; const&amp;) const"
+                  moduleName = "ticTacToe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Sami/Desktop/ticTacToe/ticTacToe/GameBoard.hpp"
+                  timestampString = "490426357.383702"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "124"
+                  endingLineNumber = "124"
+                  offsetFromSymbolStart = "76">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "GameBoard::GameBoard&lt;3ul, 3ul, TicTacToe::Cell&gt;::operator==(GameBoard::GameBoard&lt;3ul, 3ul, TicTacToe::Cell&gt; const&amp;) const"
+                  moduleName = "ticTacToe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Sami/Desktop/ticTacToe/ticTacToe/GameBoard.hpp"
+                  timestampString = "490426357.383868"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "124"
+                  endingLineNumber = "124"
+                  offsetFromSymbolStart = "64">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "ticTacToe/GameBoard.hpp"
+            timestampString = "490426358.888554"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "123"
+            endingLineNumber = "123"
+            landmarkName = "operator==(const GameBoard &amp; gameBoard)"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "GameBoard::GameBoard&lt;6ul, 6ul, CandyCrush::Cell&gt;::operator==(GameBoard::GameBoard&lt;6ul, 6ul, CandyCrush::Cell&gt; const&amp;) const"
+                  moduleName = "ticTacToe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Sami/Desktop/ticTacToe/ticTacToe/GameBoard.hpp"
+                  timestampString = "490426375.941469"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "123"
+                  endingLineNumber = "123"
+                  offsetFromSymbolStart = "20">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "GameBoard::GameBoard&lt;3ul, 3ul, TicTacToe::Cell&gt;::operator==(GameBoard::GameBoard&lt;3ul, 3ul, TicTacToe::Cell&gt; const&amp;) const"
+                  moduleName = "ticTacToe"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/Sami/Desktop/ticTacToe/ticTacToe/GameBoard.hpp"
+                  timestampString = "490426375.941692"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "123"
+                  endingLineNumber = "123"
+                  offsetFromSymbolStart = "20">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>
