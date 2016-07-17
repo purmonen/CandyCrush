@@ -51,7 +51,11 @@ std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> identityCel
     return cellPositions;
 }
 
-void CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback) {
+bool CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback) {
+    
+    if (!gameBoard.areCellsAdjacent(move.from, move.to) && !(move.from == move.to)) {
+        return false;
+    }
     
     std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> cellPositions = identityCellPositionMapForGameBoard(gameBoard);
     std::unordered_set<GameBoard::CellPosition> removedCells;
@@ -61,7 +65,6 @@ void CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
     cellPositions[move.to] = move.from;
     
     if (callback != nullptr) {
-        std::cout << "Callback should block for a second!" << std::endl;
         callback(CandyCrushGameBoardChange(cellPositions, removedCells, *this, newCells));
     }
     
@@ -69,9 +72,10 @@ void CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
     removedCells.clear();
     cellPositions = identityCellPositionMapForGameBoard(gameBoard);
     
+    auto oldGame = *this;
+    
     // Move pieces
     gameBoard.swapCells(move);
-    std::cout << "Proceeding!" << std::endl;
     
     
     // Horizontal matching
@@ -104,16 +108,6 @@ void CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
                 
                 if (callback != nullptr) {
                     callback(CandyCrushGameBoardChange(cellPositions, removedCells, oldGame, newCells));
-                    
-                    std::cout << oldGame << std::endl;
-                    
-                    std::cout << *this << std::endl;
-                    for (auto x: cellPositions) {
-                        if (!(x.first == x.second)) {
-                            std::cout << x.first << " ______" << x.second << std::endl;
-                        }
-                    }
-                    std::cout << "BREAK!" << (gameBoard == oldGame.gameBoard) << std::endl;
                 }
                 newCells.clear();
                 removedCells.clear();
@@ -180,6 +174,23 @@ void CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
         }
     }
     
+    if (oldGame.score == score) {
+        cellPositions[move.from] = move.to;
+        cellPositions[move.to] = move.from;
+        
+        if (callback != nullptr) {
+            callback(CandyCrushGameBoardChange(cellPositions, removedCells, *this, newCells));
+        }
+        
+        newCells.clear();
+        removedCells.clear();
+        cellPositions = identityCellPositionMapForGameBoard(gameBoard);
+        
+        *this = oldGame;
+        return false;
+    }
+    return true;
+    
 }
 
 CandyCrush::CandyCrush() {
@@ -204,11 +215,11 @@ int CandyCrush::getNumberOfMovesLeft() const {
 }
 
 bool CandyCrush::play(GameBoard::CellSwapMove move, GameBoardChangeCallback callback) {
-    if (isLegalMove(move) && !gameOver()) {
-        performMove(move, callback);
+    if (!gameOver()) {
+        auto validMove = performMove(move, callback);
         clearAllMatches(callback);
         numberOfMovesLeft--;
-        return true;
+        return validMove;
     }
     return false;
 }

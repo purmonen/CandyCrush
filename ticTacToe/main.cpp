@@ -259,7 +259,9 @@
 
 //SDL_Surface* loadImage(const std::string imagePath)
 //{
-//    return IMG_Load( "assets/BackGround.jpg" );
+//    auto image = IMG_Load( "assets/BackGround.jpg" );
+//    auto optimizedImage = SDL_ConvertSurfaceFormat(image, <#Uint32 pixel_format#>, <#Uint32 flags#>)(image);
+//    return optimizedImage;
 //}
 
 
@@ -400,19 +402,18 @@ struct GameEngine {
         for (auto row = 0; row < game.getGameBoard().rows; row++) {
             for (auto column = 0; column < game.getGameBoard().columns; column++) {
                 auto cell = game.getGameBoard()[row][column];
-                
                 auto from = GameBoard::CellPosition(row, column);
                 auto to = gameBoardChange.cellPositions[from];
                 auto image = cellImages[cell];
                 auto fromDestination = rectForCellPosition(from);
                 auto toDestination = rectForCellPosition(to);
-
-                
                 if (gameBoardChange.removedCells.find(from) != gameBoardChange.removedCells.end()) {
-//                    SDL_FillRect(screenSurface, &fromDestination, 0b111);
                 } else {
                     fromDestination.x += (toDestination.x-fromDestination.x)*percentage;
                     fromDestination.y += (toDestination.y-fromDestination.y)*percentage;
+                    
+                    
+                    
                     SDL_BlitSurface( image, NULL, screenSurface, &fromDestination );
                 }
             }
@@ -423,21 +424,13 @@ struct GameEngine {
             CandyCrush::Cell cell = std::get<1>(newCell);
             int numberOfRows = std::get<2>(newCell);
             auto image = cellImages[cell];
-            
-            
             auto fromDestination = rectForCellPosition((int)cellPosition.row-numberOfRows, (int)cellPosition.column, image);
-            
-            
-            std::cout << "LOL? " << (int)cellPosition.row-numberOfRows << "," << (int)cellPosition.column << std::endl;
-            
             auto toDestination = rectForCellPosition((int)cellPosition.row, (int)cellPosition.column, image);
-            
             fromDestination.x += (toDestination.x-fromDestination.x)*percentage;
             fromDestination.y += (toDestination.y-fromDestination.y)*percentage;
-            
-//            if (fromDestination.y > drawArea.y) {
-                SDL_BlitSurface( image, NULL, screenSurface, &fromDestination );
-//            }
+            auto cutoff = std::max(drawArea.y-fromDestination.y, 0);
+            auto yolo = SDL_Rect{0, cutoff,image->w, image->h-cutoff};
+            SDL_BlitSurface( image, &yolo, screenSurface, &fromDestination );
         }
         
         if (scoreLabel != nullptr) {
@@ -445,10 +438,7 @@ struct GameEngine {
         }
         scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
         auto scoreLabelRect = SDL_Rect{0,0,100,100};
-        
-        
         SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
-        
         if (timeLeftLabel != nullptr) {
             SDL_FreeSurface(timeLeftLabel);
         }
@@ -459,23 +449,14 @@ struct GameEngine {
     }
     
     void updateBoard(CandyCrushGameBoardChange gameBoardChange) {
-        auto animationTimeInMilliseconds = 1000;
-        auto iterations = 100;
+        auto animationTimeInMilliseconds = 300;
+        auto iterations = 60 * animationTimeInMilliseconds / 100;
         for (auto i = 0; i < iterations; i++) {
             render2(gameBoardChange.game, 60, gameBoardChange, i/(double)(iterations-1), false);
             SDL_Delay(animationTimeInMilliseconds/iterations);
         }
         //SDL_Delay(3000);
     }
-    
-//    void animateMove(const CandyCrush& game, size_t numberOfSecondsLeft, GameBoard::CellSwapMove move, bool fakeReverse) {
-//        auto animationTimeInMilliseconds = 150;
-//        auto iterations = 100;
-//        for (auto i = 0; i < iterations; i++) {
-//            render2(game, numberOfSecondsLeft, move, i/(double)(iterations-1), fakeReverse);
-//            SDL_Delay(animationTimeInMilliseconds/iterations);
-//        }
-//    }
     
     GameBoard::CellPosition cellPositionFromCoordinates(int x, int y) const {
         return GameBoard::CellPosition((y-drawArea.y)/cellHeight, (x-drawArea.x)/cellWidth);
@@ -490,6 +471,9 @@ struct GameEngine {
         auto start = std::chrono::high_resolution_clock::now();
         auto numberOfSeconds = 60;
         render(screenSurface, game, drawArea, numberOfSeconds);
+        auto lamm = [&](CandyCrushGameBoardChange gameBoardChange) {
+            updateBoard(gameBoardChange);
+        };
         while( !quit ) {
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
@@ -507,29 +491,9 @@ struct GameEngine {
                     
                     auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
                     std::cout << move << std::endl;
-                    CandyCrush oldGame = game;
-                    
 
-                    auto adjacentCells = game.getGameBoard().adjacentCells(move.from);
-                    if (lastX != -1 && std::find(adjacentCells.begin(), adjacentCells.end(), move.to) != adjacentCells.end()) {
-//                        animateMove(oldGame, numberOfSecondsLeft, move, false);
-//                        if (!oldGame.isLegalMove(move)) {
-//                            animateMove(oldGame, numberOfSecondsLeft, move, true);
-//                        }
-                    }
-                    
-                    
-//                    std::function<void(std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> cellPositions, GameBoard::GameBoard<6, 6, CandyCrush::Cell>)> a = static_cast<void(std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> cellPositions, GameBoard::GameBoard<6, 6, CandyCrush::Cell>)>(&GameBoard::updateBoard);
-                    
-                    
-                    auto lamm = [&](CandyCrushGameBoardChange gameBoardChange) {
-                        updateBoard(gameBoardChange);
-                    };
-                    
-//                    std::function<void(std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition>, GameBoard::GameBoard<6, 6, CandyCrush::Cell>)> callback = &updateBoard;
-                    
-                    if (game.play(move, lamm) || game.getGameBoard().areCellsAdjacent(move.from, move.to)) {
-                        std::cout << "Score: " << game.getScore() << std::endl;
+                    if (game.getGameBoard().areCellsAdjacent(move.from, move.to)) {
+                        !game.play(move, lamm);
                         lastX = -1;
                         lastY = -1;
                     } else {
@@ -543,27 +507,23 @@ struct GameEngine {
                     isMouseDown = false;
                 }
                 
-//                if (e.type == SDL_MOUSEMOTION && isMouseDown && lastX != -1) {
-//                    int x, y;
-//                    SDL_GetMouseState(&x, &y);
-//                    auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
-//                    if (!(move.to == move.from) && game.getGameBoard().isCellValid(cellPositionFromCoordinates(x, y)) && game.getGameBoard().isCellValid(cellPositionFromCoordinates(lastX, lastY))) {
-//                            if (lastX != -1 && game.getGameBoard().areCellsAdjacent(move.from, move.to)) {
-////                                animateMove(game, numberOfSecondsLeft, move, false);
-////                                if (!game.isLegalMove(move)) {
-////                                    animateMove(game, numberOfSecondsLeft, move, true);
-////                                }
-//                            }
-//                        if (!game.play(move)) {
-//                            lastX = -1;
-//                            lastY = -1;
-//                        }
-//                    }
-//                }
+                if (e.type == SDL_MOUSEMOTION && isMouseDown && lastX != -1) {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
+                    if (game.getGameBoard().areCellsAdjacent(move.from, move.to)) {
+                        game.play(move, lamm);
+                        lastX = -1;
+                        lastY = -1;
+                    }
+
+                }
+                render(screenSurface, game, drawArea, numberOfSecondsLeft);
+                
             }
             
             //std::cout << "Execution time (us): " << numberOfSecondsLeft << std::endl;
-//            render(screenSurface, game, drawArea, numberOfSecondsLeft);
+            
         }
     }
 };

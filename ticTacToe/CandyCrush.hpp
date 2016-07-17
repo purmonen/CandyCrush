@@ -37,7 +37,7 @@ private:
     
     int scoreForMatches(int numberOfMatches);
 //    void performMove(GameBoard::CellSwapMove move);
-    void performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback = nullptr);
+    bool performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback = nullptr);
 public:
     CandyCrush();
     const GameBoard::GameBoard<6, 6, Cell>& getGameBoard() const;
