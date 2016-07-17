@@ -57,6 +57,7 @@ namespace GameBoard {
             });
         }
         
+        
         GameBoard(const CellType defaultValue) {
             performActionOnCell([&](auto row, auto column, auto& cell) {
                 cell = defaultValue;
@@ -91,6 +92,22 @@ namespace GameBoard {
         
         bool isCellValid(CellPosition cell) const {
             return cell.row >= 0 && cell.row < rows && cell.column >= 0 && cell.column < columns;
+        }
+        
+        bool areCellsAdjacent(CellPosition cell1, CellPosition cell2) const {
+            auto cells = adjacentCells(cell1);
+            return std::find(cells.begin(), cells.end(), cell2) != cells.end();
+        }
+        
+        std::vector<CellPosition> adjacentCells(CellPosition cell) const {
+            std::vector<CellPosition> cells;
+            for (auto direction: {Up, Right, Down, Left}) {
+                auto adjacentCell = cell.cellAtDirection(direction);
+                if (isCellValid(adjacentCell)) {
+                    cells.push_back(adjacentCell);
+                }
+            }
+            return cells;
         }
         
         void performActionOnCell(const std::function<void(size_t, size_t, CellType&)> action) {

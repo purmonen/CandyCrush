@@ -22,8 +22,6 @@ bool CandyCrush::isLegalMove(GameBoard::CellSwapMove move) const {
         return false;
     }
     
-    
-    
     auto adjacentCells = {move.from.cellAtDirection(GameBoard::Up), move.from.cellAtDirection(GameBoard::Right), move.from.cellAtDirection(GameBoard::Down), move.from.cellAtDirection(GameBoard::Left)};
     
     if (std::find(adjacentCells.begin(), adjacentCells.end(), move.to) == adjacentCells.end()) {

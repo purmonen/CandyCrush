@@ -31,13 +31,14 @@ private:
     int score = 0;
     Cell randomCell();
     void clearAllMatches();
-    bool isLegalMove(GameBoard::CellSwapMove move) const;
+    
     int scoreForMatches(int numberOfMatches);
     void performMove(GameBoard::CellSwapMove move);
     
 public:
     CandyCrush();
     const GameBoard::GameBoard<6, 6, Cell>& getGameBoard() const;
+    bool isLegalMove(GameBoard::CellSwapMove move) const;
     bool operator==(const CandyCrush & game) const;
     int getScore() const;
     int getNumberOfMovesLeft() const;
