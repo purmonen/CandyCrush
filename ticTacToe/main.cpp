@@ -257,21 +257,13 @@
 #include <stdio.h>
 
 
-SDL_Surface* loadImage(const std::string imagePath)
-{
-    return IMG_Load( "assets/BackGround.jpg" );
-}
+//SDL_Surface* loadImage(const std::string imagePath)
+//{
+//    return IMG_Load( "assets/BackGround.jpg" );
+//}
 
 
-SDL_Surface* surfaceForText(std::string text) {
-    TTF_Font* Sans = TTF_OpenFont("/Library/Fonts/Arial.ttf", 54); //this opens a font style and sets a size
-    SDL_Color White = {255, 255, 255};  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
-    SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, text.c_str(), White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
-    if (surfaceMessage == nullptr) {
-        std::cout << "SDL_Surface Error: " << SDL_GetError() << std::endl;
-    }
-    return surfaceMessage;
-}
+
 
 struct GameEngine {
     
@@ -286,6 +278,8 @@ struct GameEngine {
     const int numberOfColumns = (int)game.getGameBoard().columns;
     const SDL_Rect drawArea = SDL_Rect{340,110,320,320};
     const int cellHeight = drawArea.h / numberOfRows;
+    
+    TTF_Font* Sans;
     const int cellWidth = drawArea.w / numberOfColumns;
     
     
@@ -296,7 +290,19 @@ struct GameEngine {
     const int windowWidth = 755;
     const int windowHeight = 600;
     
+    
+    SDL_Surface* surfaceForText(std::string text) {
+         //this opens a font style and sets a size
+        SDL_Color White = {255, 255, 255};  // this is the color in rgb format, maxing out all would give you the color white, and it will be your text's color
+        SDL_Surface* surfaceMessage = TTF_RenderText_Solid(Sans, text.c_str(), White); // as TTF_RenderText_Solid could only be used on SDL_Surface then you have to create the surface first
+        if (surfaceMessage == nullptr) {
+            std::cout << "SDL_Surface Error: " << SDL_GetError() << std::endl;
+        }
+        return surfaceMessage;
+    }
+    
     GameEngine() {
+        
         if( SDL_Init( SDL_INIT_VIDEO ) < 0 ) {
             printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
             throw;
@@ -312,7 +318,7 @@ struct GameEngine {
             printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
             throw;
         }
-        
+        Sans = TTF_OpenFont("/Library/Fonts/Arial.ttf", 54);
         screenSurface = SDL_GetWindowSurface( window );
         
         // Load assets
@@ -351,29 +357,31 @@ struct GameEngine {
             for (auto column = 0; column < game.getGameBoard().columns; column++) {
                 auto cell = game.getGameBoard()[row][column];
                 auto image = cellImages[cell];
+                
                 auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
                 
                 if (lastX != -1 && GameBoard::CellPosition(row, column) == cellPositionFromCoordinates(lastX, lastY)) {
+                    auto destination = SDL_Rect{cellWidth*column + drawArea.x, cellHeight*row + drawArea.y, cellWidth, cellHeight};
                     SDL_FillRect(screenSurface, &destination, 0b111);
                 }
                 SDL_BlitSurface( image, NULL, screenSurface, &destination );
             }
         }
-        //        if (scoreLabel != nullptr) {
-        //            SDL_FreeSurface(scoreLabel);
-        //        }
-        //        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
-        //        auto scoreLabelRect = SDL_Rect{0,0,100,100};
+                if (scoreLabel != nullptr) {
+                    SDL_FreeSurface(scoreLabel);
+                }
+                scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
+                auto scoreLabelRect = SDL_Rect{0,0,100,100};
         
         
-        //        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
+                SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
         
-        //        if (timeLeftLabel != nullptr) {
-        //            SDL_FreeSurface(timeLeftLabel);
-        //        }
-        //        timeLeftLabel = surfaceForText(std::to_string(numberOfSecondsLeft));
-        //        auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
-        //        SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
+                if (timeLeftLabel != nullptr) {
+                    SDL_FreeSurface(timeLeftLabel);
+                }
+                timeLeftLabel = surfaceForText(std::to_string(numberOfSecondsLeft));
+                auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
+                SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
         SDL_UpdateWindowSurface(window);
     }
     
@@ -422,16 +430,10 @@ struct GameEngine {
                 if (e.type == SDL_MOUSEMOTION && isMouseDown && lastX != -1) {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
-                    //                    std::cout << x << "," << y << std::endl;
-                    
-                    
                     auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
-                    
                     if (!(move.to == move.from)) {
-                        
                         std::cout << move;
                         if (!game.play(move)) {
-                            //std::cout << "Score: " << game.getScore() << std::endl;
                             lastX = -1;
                             lastY = -1;
                         }
