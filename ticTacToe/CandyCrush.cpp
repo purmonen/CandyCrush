@@ -90,7 +90,12 @@ bool CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
             if ((!cellsMatched || column == gameBoard.rows -1 ) && numberOfMatches >= 3) {
                 score += scoreForMatches(numberOfMatches);
                 CandyCrush oldGame = *this;
-                for (auto matchedColumn = column-numberOfMatches; matchedColumn < column; matchedColumn++) {
+                
+                auto lastColumn = column;
+                if (cellsMatched) {
+                    lastColumn++;
+                }
+                for (auto matchedColumn = lastColumn-numberOfMatches; matchedColumn < lastColumn; matchedColumn++) {
                     removedCells.insert(GameBoard::CellPosition(row, matchedColumn));
                     for (auto matchedRow = row-1; matchedRow >= 0; matchedRow--) {
                         cellPositions[GameBoard::CellPosition(matchedRow, matchedColumn)] = GameBoard::CellPosition(matchedRow+1, matchedColumn);

@@ -480,7 +480,10 @@ struct GameEngine {
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
             auto numberOfSecondsLeft = numberOfSeconds-duration;
-            while( SDL_PollEvent( &e ) != 0 ) {
+            CandyCrushRandomBot bot;
+            game.play(bot.selectMove(game), lamm);
+            //SDL_Delay(<#Uint32 ms#>)
+            while( false && SDL_PollEvent( &e ) != 0 ) {
                 
                 if( e.type == SDL_QUIT ) {
                     quit = true;
