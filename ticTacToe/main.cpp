@@ -306,7 +306,7 @@ struct GameEngine {
             printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError() );
             throw;
         }
-
+        
         window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, windowWidth, windowHeight, SDL_WINDOW_SHOWN);
         if( window == nullptr) {
             printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
@@ -359,32 +359,34 @@ struct GameEngine {
                 SDL_BlitSurface( image, NULL, screenSurface, &destination );
             }
         }
-//        if (scoreLabel != nullptr) {
-//            SDL_FreeSurface(scoreLabel);
-//        }
-//        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
-//        auto scoreLabelRect = SDL_Rect{0,0,100,100};
+        //        if (scoreLabel != nullptr) {
+        //            SDL_FreeSurface(scoreLabel);
+        //        }
+        //        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
+        //        auto scoreLabelRect = SDL_Rect{0,0,100,100};
         
         
-//        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
+        //        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
         
-//        if (timeLeftLabel != nullptr) {
-//            SDL_FreeSurface(timeLeftLabel);
-//        }
-//        timeLeftLabel = surfaceForText(std::to_string(numberOfSecondsLeft));
-//        auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
-//        SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
+        //        if (timeLeftLabel != nullptr) {
+        //            SDL_FreeSurface(timeLeftLabel);
+        //        }
+        //        timeLeftLabel = surfaceForText(std::to_string(numberOfSecondsLeft));
+        //        auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
+        //        SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
         SDL_UpdateWindowSurface(window);
     }
     
     
     GameBoard::CellPosition cellPositionFromCoordinates(int x, int y) {
-        return GameBoard::CellPosition(y/cellHeight, x/cellWidth);
+        return GameBoard::CellPosition((y-drawArea.y)/cellHeight, (x-drawArea.x)/cellWidth);
     }
     
     void run() {
         bool quit = false;
         SDL_Event e;
+        
+        bool isMouseDown = false;
         
         auto start = std::chrono::high_resolution_clock::now();
         auto numberOfSeconds = 60;
@@ -396,23 +398,44 @@ struct GameEngine {
                 }
                 
                 if (e.type == SDL_MOUSEBUTTONDOWN){
+                    isMouseDown = true;
                     int x, y;
-                    
                     SDL_GetMouseState(&x, &y);
-                    x -= drawArea.x;
-                    y -= drawArea.y;
                     
-                        auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
+                    auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
+                    std::cout << move << std::endl;
+                    if (game.play(move)) {
+                        std::cout << "Score: " << game.getScore() << std::endl;
+                        lastX = -1;
+                        lastY = -1;
+                    } else {
+                        std::cout << "Could not make the move" << std::endl;
+                        lastX = x;
+                        lastY = y;
+                    }
+                }
+                
+                if (e.type == SDL_MOUSEBUTTONUP && lastX != -1) {
+                    isMouseDown = false;
+                }
+                
+                if (e.type == SDL_MOUSEMOTION && isMouseDown && lastX != -1) {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    //                    std::cout << x << "," << y << std::endl;
+                    
+                    
+                    auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
+                    
+                    if (!(move.to == move.from)) {
+                        
                         std::cout << move;
-                        if (game.play(move)) {
-                            std::cout << "Score: " << game.getScore() << std::endl;
+                        if (!game.play(move)) {
+                            //std::cout << "Score: " << game.getScore() << std::endl;
                             lastX = -1;
                             lastY = -1;
-                        } else {
-                            std::cout << "Could not make the move" << std::endl;
-                            lastX = x;
-                            lastY = y;
                         }
+                    }
                 }
             }
             
@@ -423,9 +446,7 @@ struct GameEngine {
             //std::cout << "Execution time (us): " << numberOfSecondsLeft << std::endl;
             render(screenSurface, game, drawArea, numberOfSecondsLeft);
         }
-
     }
-    
 };
 
 
