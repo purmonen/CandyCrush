@@ -87,13 +87,8 @@ bool CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
             if (cellsMatched) {
                 numberOfMatches++;
             }
-        
             if ((!cellsMatched || column == gameBoard.rows -1 ) && numberOfMatches >= 3) {
                 score += scoreForMatches(numberOfMatches);
-                
-                
-//                GameBoard::GameBoard<6, 6, CandyCrush::Cell> oldGameBoard = gameBoard;
-                
                 CandyCrush oldGame = *this;
                 for (auto matchedColumn = column-numberOfMatches; matchedColumn < column; matchedColumn++) {
                     removedCells.insert(GameBoard::CellPosition(row, matchedColumn));
@@ -113,11 +108,7 @@ bool CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
                 removedCells.clear();
                 cellPositions = identityCellPositionMapForGameBoard(gameBoard);
             }
-            
             if (!cellsMatched) {
-                
-
-                
                 numberOfMatches = 1;
             }
             
@@ -135,7 +126,11 @@ bool CandyCrush::performMove(GameBoard::CellSwapMove move, GameBoardChangeCallba
             }
             if ((!cellsMatched || row == gameBoard.rows-1) && numberOfMatches >= 3) {
                 score += scoreForMatches(numberOfMatches);
-                int prevRow = row-numberOfMatches-1;
+                int prevRow = row-numberOfMatches;
+                if (!cellsMatched) {
+                    prevRow--;
+                }
+                
                 auto oldGame = *this;
                 while (prevRow >= 0) {
                     cellPositions[GameBoard::CellPosition(prevRow, column)] = GameBoard::CellPosition(prevRow+numberOfMatches, column);

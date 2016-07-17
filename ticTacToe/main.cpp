@@ -361,6 +361,8 @@ struct GameEngine {
                 auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
                 
                 if (lastX != -1 && GameBoard::CellPosition(row, column) == cellPositionFromCoordinates(lastX, lastY)) {
+                    
+                    // Draw dark background around selected cell
                     auto destination = SDL_Rect{cellWidth*column + drawArea.x, cellHeight*row + drawArea.y, cellWidth, cellHeight};
                     SDL_FillRect(screenSurface, &destination, 0b111);
                 }
@@ -450,7 +452,8 @@ struct GameEngine {
     
     void updateBoard(CandyCrushGameBoardChange gameBoardChange) {
         auto animationTimeInMilliseconds = 300;
-        auto iterations = 60 * animationTimeInMilliseconds / 100;
+        auto fps = 30;
+        auto iterations = fps * animationTimeInMilliseconds / 100;
         for (auto i = 0; i < iterations; i++) {
             render2(gameBoardChange.game, 60, gameBoardChange, i/(double)(iterations-1), false);
             SDL_Delay(animationTimeInMilliseconds/iterations);
@@ -465,7 +468,6 @@ struct GameEngine {
     void run() {
         bool quit = false;
         SDL_Event e;
-        
         bool isMouseDown = false;
         
         auto start = std::chrono::high_resolution_clock::now();
@@ -493,7 +495,7 @@ struct GameEngine {
                     std::cout << move << std::endl;
 
                     if (game.getGameBoard().areCellsAdjacent(move.from, move.to)) {
-                        !game.play(move, lamm);
+                        game.play(move, lamm);
                         lastX = -1;
                         lastY = -1;
                     } else {
@@ -507,7 +509,7 @@ struct GameEngine {
                     isMouseDown = false;
                 }
                 
-                if (e.type == SDL_MOUSEMOTION && isMouseDown && lastX != -1) {
+                if (e.type == SDL_MOUSEMOTION && isMouseDown) {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
                     auto move = GameBoard::CellSwapMove(cellPositionFromCoordinates(x, y), cellPositionFromCoordinates(lastX, lastY));
