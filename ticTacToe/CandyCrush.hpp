@@ -36,7 +36,7 @@ private:
     void clearAllMatches(GameBoardChangeCallback callback = nullptr);
     
     int scoreForMatches(int numberOfMatches);
-//    void performMove(GameBoard::CellSwapMove move);
+    //    void performMove(GameBoard::CellSwapMove move);
     bool performMove(GameBoard::CellSwapMove move, GameBoardChangeCallback callback = nullptr);
 public:
     CandyCrush();
@@ -78,6 +78,8 @@ namespace std {
                 }
             }
             
+            
+            
             return seed;
         }
     };
@@ -86,12 +88,20 @@ namespace std {
 struct CandyCrushGameBoardChange {
     std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> cellPositions;
     std::unordered_set<GameBoard::CellPosition> removedCells;
-//    std::unordered_set<GameBoard::CellPosition>
+    //    std::unordered_set<GameBoard::CellPosition>
     CandyCrush game;
     std::vector<std::tuple<GameBoard::CellPosition, CandyCrush::Cell, int>> newCells;
     CandyCrushGameBoardChange(std::unordered_map<GameBoard::CellPosition, GameBoard::CellPosition> cellPositions, std::unordered_set<GameBoard::CellPosition> removedCells, CandyCrush game, std::vector<std::tuple<GameBoard::CellPosition, CandyCrush::Cell, int>> newCells): cellPositions(cellPositions), removedCells(removedCells), game(game), newCells(newCells) {
-        
     }
+    
+    CandyCrushGameBoardChange(CandyCrush game): game(game) {
+        for (auto row = 0; row < game.getGameBoard().rows; row++) {
+            for (auto column = 0; column < game.getGameBoard().columns; column++) {
+                cellPositions[GameBoard::CellPosition(row, column)] = GameBoard::CellPosition(row, column);
+            }
+        }
+    }
+    
     
 };
 

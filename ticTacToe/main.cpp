@@ -256,17 +256,6 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-
-//SDL_Surface* loadImage(const std::string imagePath)
-//{
-//    auto image = IMG_Load( "assets/BackGround.jpg" );
-//    auto optimizedImage = SDL_ConvertSurfaceFormat(image, <#Uint32 pixel_format#>, <#Uint32 flags#>)(image);
-//    return optimizedImage;
-//}
-
-
-
-
 struct GameEngine {
     
     std::unordered_map<CandyCrush::Cell, SDL_Surface*> cellImages;
@@ -349,46 +338,45 @@ struct GameEngine {
     
     SDL_Surface* timeLeftLabel = nullptr;
     SDL_Surface* scoreLabel = nullptr;
-    void render(SDL_Surface* screenSurface, const CandyCrush& game, SDL_Rect drawArea, size_t numberOfSecondsLeft) {
-        //SDL_FillRect(screenSurface, NULL, 0x000000);
-        SDL_BlitSurface(backgroundImage, NULL, screenSurface, NULL );
-        
-        for (auto row = 0; row < game.getGameBoard().rows; row++) {
-            for (auto column = 0; column < game.getGameBoard().columns; column++) {
-                auto cell = game.getGameBoard()[row][column];
-                auto image = cellImages[cell];
-                
-                auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
-                
-                if (lastX != -1 && GameBoard::CellPosition(row, column) == cellPositionFromCoordinates(lastX, lastY)) {
-                    
-                    // Draw dark background around selected cell
-                    auto destination = SDL_Rect{cellWidth*column + drawArea.x, cellHeight*row + drawArea.y, cellWidth, cellHeight};
-                    SDL_FillRect(screenSurface, &destination, 0b111);
-                }
-                SDL_BlitSurface( image, NULL, screenSurface, &destination );
-            }
-        }
-        if (scoreLabel != nullptr) {
-            SDL_FreeSurface(scoreLabel);
-        }
-        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
-        auto scoreLabelRect = SDL_Rect{0,0,100,100};
-        
-        
-        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
-        
-        if (timeLeftLabel != nullptr) {
-            SDL_FreeSurface(timeLeftLabel);
-        }
-        timeLeftLabel = surfaceForText(std::to_string(numberOfSecondsLeft));
-        auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
-        SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
-        SDL_UpdateWindowSurface(window);
-    }
+//    void render(SDL_Surface* screenSurface, const CandyCrush& game, SDL_Rect drawArea, size_t numberOfSecondsLeft) {
+//        //SDL_FillRect(screenSurface, NULL, 0x000000);
+//        SDL_BlitSurface(backgroundImage, NULL, screenSurface, NULL );
+//        
+//        for (auto row = 0; row < game.getGameBoard().rows; row++) {
+//            for (auto column = 0; column < game.getGameBoard().columns; column++) {
+//                auto cell = game.getGameBoard()[row][column];
+//                auto image = cellImages[cell];
+//                
+//                auto destination = SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
+//                
+//                if (lastX != -1 && GameBoard::CellPosition(row, column) == cellPositionFromCoordinates(lastX, lastY)) {
+//                    
+//                    // Draw dark background around selected cell
+//                    auto destination = SDL_Rect{cellWidth*column + drawArea.x, cellHeight*row + drawArea.y, cellWidth, cellHeight};
+//                    SDL_FillRect(screenSurface, &destination, 0b111);
+//                }
+//                SDL_BlitSurface( image, NULL, screenSurface, &destination );
+//            }
+//        }
+//        if (scoreLabel != nullptr) {
+//            SDL_FreeSurface(scoreLabel);
+//        }
+//        scoreLabel = surfaceForText("Score: " + std::to_string(game.getScore()));
+//        auto scoreLabelRect = SDL_Rect{0,0,100,100};
+//        
+//        
+//        SDL_BlitSurface(scoreLabel, NULL, screenSurface, &scoreLabelRect);
+//        
+//        if (timeLeftLabel != nullptr) {
+//            SDL_FreeSurface(timeLeftLabel);
+//        }
+//        timeLeftLabel = surfaceForText(std::to_string(numberOfSecondsLeft));
+//        auto timeLeftLabelRect = SDL_Rect{80,430,100,100};
+//        SDL_BlitSurface(timeLeftLabel, NULL, screenSurface, &timeLeftLabelRect);
+//        SDL_UpdateWindowSurface(window);
+//    }
     
     SDL_Rect rectForCellPosition(GameBoard::CellPosition cellPosition) {
-        
         auto image = cellImages[game.getGameBoard()[cellPosition]];
         return SDL_Rect{cellWidth*(int)cellPosition.column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*(int)cellPosition.row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
     }
@@ -397,7 +385,7 @@ struct GameEngine {
         return SDL_Rect{cellWidth*column+cellWidth/2-image->w/2 + drawArea.x, cellHeight*row+cellHeight/2-image->h/2+drawArea.y, cellWidth, cellHeight};
     }
     
-    void render2(const CandyCrush& game, size_t numberOfSecondsLeft, CandyCrushGameBoardChange gameBoardChange, double percentage, bool fakeReverse) {
+    void render(const CandyCrush& game, size_t numberOfSecondsLeft, CandyCrushGameBoardChange gameBoardChange, double percentage) {
         //SDL_FillRect(screenSurface, NULL, 0x000000);
         SDL_BlitSurface(backgroundImage, NULL, screenSurface, NULL );
         
@@ -413,9 +401,6 @@ struct GameEngine {
                 } else {
                     fromDestination.x += (toDestination.x-fromDestination.x)*percentage;
                     fromDestination.y += (toDestination.y-fromDestination.y)*percentage;
-                    
-                    
-                    
                     SDL_BlitSurface( image, NULL, screenSurface, &fromDestination );
                 }
             }
@@ -455,7 +440,7 @@ struct GameEngine {
         auto fps = 30;
         auto iterations = fps * animationTimeInMilliseconds / 100;
         for (auto i = 0; i < iterations; i++) {
-            render2(gameBoardChange.game, 60, gameBoardChange, i/(double)(iterations-1), false);
+            render(gameBoardChange.game, 60, gameBoardChange, i/(double)(iterations-1));
             SDL_Delay(animationTimeInMilliseconds/iterations);
         }
         //SDL_Delay(3000);
@@ -472,7 +457,9 @@ struct GameEngine {
         
         auto start = std::chrono::high_resolution_clock::now();
         auto numberOfSeconds = 60;
-        render(screenSurface, game, drawArea, numberOfSeconds);
+        
+        render(game, numberOfSeconds, CandyCrushGameBoardChange(game), 1);
+        
         auto lamm = [&](CandyCrushGameBoardChange gameBoardChange) {
             updateBoard(gameBoardChange);
         };
@@ -480,10 +467,10 @@ struct GameEngine {
             auto end = std::chrono::high_resolution_clock::now();
             auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start).count();
             auto numberOfSecondsLeft = numberOfSeconds-duration;
-            CandyCrushRandomBot bot;
-            game.play(bot.selectMove(game), lamm);
+//            CandyCrushRandomBot bot;
+//            game.play(bot.selectMove(game), lamm);
             //SDL_Delay(<#Uint32 ms#>)
-            while( false && SDL_PollEvent( &e ) != 0 ) {
+            while( SDL_PollEvent( &e ) != 0 ) {
                 
                 if( e.type == SDL_QUIT ) {
                     quit = true;
@@ -523,7 +510,7 @@ struct GameEngine {
                     }
 
                 }
-                render(screenSurface, game, drawArea, numberOfSecondsLeft);
+                render(game, numberOfSeconds, CandyCrushGameBoardChange(game), 1);
                 
             }
             
